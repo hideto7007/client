@@ -50,9 +50,14 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-main style="height: 700px;">
-        <!-- <PriceManagment /> -->
+    <div v-if="drawer || myPageDrawer">
+      <v-main style="height: 300px;">
       </v-main>
+    </div>
+    <div v-else>
+      <v-main>
+      </v-main>
+    </div>
     </v-layout>
   </v-card>
 </template>
@@ -60,7 +65,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue'
-// import PriceManagment from '../components/PriceManagment.vue'
+import router from '../router';
 
 const drawer = ref<boolean>(false)
 const myPageDrawer = ref<boolean>(false)
@@ -83,7 +88,7 @@ const items = ref<Item[]>([
   },
   {
     page: '年収管理',
-    url: 'no path',
+    url: '/about',
   },
   {
     page: 'piyo',
@@ -136,6 +141,7 @@ const logout = () : void => {
 
 const pageTransition = (key: number) : void => {
   console.log(items.value[key].url)
+  router.push(items.value[key].url)
   drawer.value = false
 }
 const myPageList = (key: number) : void => {
