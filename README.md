@@ -13,12 +13,15 @@ npm install axios
 npm install vue-router@next
 npm install @vue/compiler-sfc
 npm install vue-class-component
+npm install --save @mdi/font
 
 // main.tsを以下のように修正
 import { createApp } from 'vue'
-import './style.css'
+// import './style.css'
 import App from './App.vue'
 import router from './router'
+import "vuetify/dist/vuetify.min.css"
+import '@mdi/font/css/materialdesignicons.css'
 
 // Vuetify
 import 'vuetify/styles'
@@ -28,12 +31,16 @@ import * as directives from 'vuetify/directives'
 const vuetify = createVuetify({
   components,
   directives,
+  icons: {
+    iconfont: 'mdi', // 使用するアイコンフォントを指定
+  },
 })
 
 createApp(App)
     .use(router)
     .use(vuetify)
     .mount('#app')
+
 ```
 
 
