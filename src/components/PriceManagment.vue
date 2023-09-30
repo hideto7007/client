@@ -41,7 +41,6 @@
     <v-btn @click="handleReset">
       clear
     </v-btn>
-    {{ test }}
   </div>
 </template>
 
