@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-card>
     <v-layout>
       <v-app-bar
@@ -15,142 +16,70 @@
           <v-icon left>mdi-logout</v-icon> 
         </v-btn>
 
+        <v-btn variant="text" icon="mdi-twitter"></v-btn>
+        <v-btn variant="text" icon="mdi-facebook"></v-btn>
+        <v-btn variant="text" icon="mdi-instagram"></v-btn>
+
         <v-btn variant="text" icon="mdi-dots-vertical" @click.stop="myPageDrawer = !myPageDrawer"></v-btn>
       </v-app-bar>
 
-      <!-- ページメニュー -->
-      <v-navigation-drawer
-        v-model="drawer"
-        location="left"
-        :temporary="false"
-      >
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in items"
-            :key="index"
-          >
-            <v-btn variant="text" @click="pageTransition(index)">{{ item.page }}</v-btn>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-
-      <!-- 詳細情報一覧 -->
-      <v-navigation-drawer
-        v-model="myPageDrawer"
-        location="right"
-        :temporary="false"
-      >
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in myPages"
-            :key="index"
-          >
-            <v-btn variant="text" @click="myPageList(index)">{{ item.title }}</v-btn>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-
-    <div v-if="drawer || myPageDrawer">
-      <v-main style="height: 300px;">
-      </v-main>
-    </div>
-    <div v-else>
       <v-main>
       </v-main>
-    </div>
+
     </v-layout>
   </v-card>
+    <div v-if="drawer">
+      <!-- ページメニュー -->
+      <Sidebar @drawer="toggleDrawer" />
+    </div>
+    <div v-if="myPageDrawer">
+      <!-- 設定一覧 -->
+      <MyPage @myPageDrawer="toggleMyPageDrawer" />
+    </div>
+  </div>
 </template>
 
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
-import router from '../router';
+import { ref, computed, watch } from 'vue'
+import Sidebar from '../components/Sidebar.vue'
+import MyPage from '../components/MyPage.vue'
+
 
 const drawer = ref<boolean>(false)
 const myPageDrawer = ref<boolean>(false)
 
-interface Item {
-  page: string;
-  url: string;
-}
-
-interface MyPage {
-  title: string;
-  value: string;
-}
-
-
-const items = ref<Item[]>([
-  {
-    page: '貯金額計算',
-    url: '/pricemanagement',
+// computedプロパティを使用してdrawerとmyPageDrawerの値を管理します
+const computedDrawer = computed<boolean>({
+  get: () => drawer.value,
+  set: (value) => {
+    drawer.value = value;
   },
-  {
-    page: '年収管理',
-    url: '/about',
-  },
-  {
-    page: 'piyo',
-    url: 'no path',
-  },
-  {
-    page: 'hoge',
-    url: 'no path',
-  },
-])
-
-const myPages = ref<MyPage[]>([
-  {
-    title: 'アカウント',
-    value: 'account',
-  },
-  {
-    title: 'おしらせ',
-    value: 'notice',
-  },
-  {
-    title: 'バージョン',
-    value: 'version',
-  },
-  {
-    title: '関連サイト',
-    value: 'relation_site',
-  },
-])
-
-watch(drawer, (beforeValue) : void => {
-  if (beforeValue) {
-    drawer.value = true
-  } else {
-    drawer.value = false
-  }
 })
 
-watch(myPageDrawer, (beforeValue) : void => {
-  if (beforeValue) {
-    myPageDrawer.value = true
-  } else {
-    myPageDrawer.value = false
+const computedMyPageDrawer = computed<boolean>({
+  get: () => myPageDrawer.value,
+  set: (value) => {
+    myPageDrawer.value = value;
+  },
+})
+
+const toggleDrawer = () => {
+  computedDrawer.value = true
+}
+
+const toggleMyPageDrawer = () => {
+  computedMyPageDrawer.value = true
+}
+
+watch([drawer, myPageDrawer], ([], []) => {
+  if (computedDrawer.value === true && computedMyPageDrawer.value === true) {
+    computedDrawer.value = false
   }
 })
 
 const logout = () : void => {
   console.log("logout")
 }
-
-const pageTransition = (key: number) : void => {
-  console.log(items.value[key].url)
-  router.push(items.value[key].url)
-  drawer.value = false
-}
-const myPageList = (key: number) : void => {
-  console.log(myPages.value[key].value)
-  myPageDrawer.value = false
-}
-
-onMounted(() => {
-  console.log(drawer.value)
-})
 
 </script>
