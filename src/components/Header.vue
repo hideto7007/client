@@ -15,14 +15,14 @@
           <v-icon left>mdi-logout</v-icon> 
         </v-btn>
 
-        <v-btn variant="text" icon="mdi-dots-vertical" @click="myPage"></v-btn>
+        <v-btn variant="text" icon="mdi-dots-vertical" @click.stop="myPageDrawer = !myPageDrawer"></v-btn>
       </v-app-bar>
 
+      <!-- ページメニュー -->
       <v-navigation-drawer
         v-model="drawer"
         location="left"
         :temporary="false"
-        :mini-variant-width="34"
       >
         <v-list>
           <v-list-item
@@ -34,8 +34,24 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-main style="height: 500px;">
-        <PriceManagment />
+      <!-- 詳細情報一覧 -->
+      <v-navigation-drawer
+        v-model="myPageDrawer"
+        location="right"
+        :temporary="false"
+      >
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in myPages"
+            :key="index"
+          >
+            <v-btn variant="text" @click="myPageList(index)">{{ item.title }}</v-btn>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-main style="height: 700px;">
+        <!-- <PriceManagment /> -->
       </v-main>
     </v-layout>
   </v-card>
@@ -44,14 +60,21 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue'
-import PriceManagment from '../components/PriceManagment.vue'
+// import PriceManagment from '../components/PriceManagment.vue'
 
 const drawer = ref<boolean>(false)
+const myPageDrawer = ref<boolean>(false)
 
 interface Item {
   page: string;
   url: string;
 }
+
+interface MyPage {
+  title: string;
+  value: string;
+}
+
 
 const items = ref<Item[]>([
   {
@@ -72,11 +95,38 @@ const items = ref<Item[]>([
   },
 ])
 
+const myPages = ref<MyPage[]>([
+  {
+    title: 'アカウント',
+    value: 'account',
+  },
+  {
+    title: 'おしらせ',
+    value: 'notice',
+  },
+  {
+    title: 'バージョン',
+    value: 'version',
+  },
+  {
+    title: '関連サイト',
+    value: 'relation_site',
+  },
+])
+
 watch(drawer, (beforeValue) : void => {
   if (beforeValue) {
     drawer.value = true
   } else {
     drawer.value = false
+  }
+})
+
+watch(myPageDrawer, (beforeValue) : void => {
+  if (beforeValue) {
+    myPageDrawer.value = true
+  } else {
+    myPageDrawer.value = false
   }
 })
 
@@ -86,10 +136,11 @@ const logout = () : void => {
 
 const pageTransition = (key: number) : void => {
   console.log(items.value[key].url)
+  drawer.value = false
 }
-
-const myPage = () : void => {
-  console.log("myPage")
+const myPageList = (key: number) : void => {
+  console.log(myPages.value[key].value)
+  myPageDrawer.value = false
 }
 
 onMounted(() => {
