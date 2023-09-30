@@ -40,8 +40,8 @@
 </template>
 
 
-<script lang="ts" setup>
-import { ref, computed, watch } from 'vue'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
 import MyPage from '../components/MyPage.vue'
 
