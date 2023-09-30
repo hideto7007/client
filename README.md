@@ -1,4 +1,41 @@
 # Vue 3 + TypeScript + Vite
+## finance app
+
+- 環境構築コマンド
+```
+npm create vite@latest app --template vue-ts
+cd app
+npm intsall
+npm run dev
+
+npm install vuetify@next
+npm install axios
+npm install vue-router@next
+npm install @vue/compiler-sfc
+npm install vue-class-component
+
+// main.tsを以下のように修正
+import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import router from './router'
+
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
+createApp(App)
+    .use(router)
+    .use(vuetify)
+    .mount('#app')
+```
+
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
