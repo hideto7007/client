@@ -49,32 +49,33 @@ import MyPage from '../components/MyPage.vue'
 const drawer = ref<boolean>(false)
 const myPageDrawer = ref<boolean>(false)
 
-// computedプロパティを使用してdrawerとmyPageDrawerの値を管理します
-const computedDrawer = computed<boolean>({
-  get: () => drawer.value,
-  set: (value) => {
-    drawer.value = value;
-  },
-})
-
-const computedMyPageDrawer = computed<boolean>({
-  get: () => myPageDrawer.value,
-  set: (value) => {
-    myPageDrawer.value = value;
-  },
-})
-
-const toggleDrawer = () => {
-  computedDrawer.value = true
+const toggleDrawer = (val: boolean) => {
+  drawer.value = val
 }
 
-const toggleMyPageDrawer = () => {
-  computedMyPageDrawer.value = true
+const toggleMyPageDrawer = (val: boolean) => {
+  myPageDrawer.value = val
 }
+
+watch(drawer, (beforeValue) : void => {
+  if (beforeValue) {
+    drawer.value = true
+  } else {
+    drawer.value = false
+  }
+})
+
+watch(myPageDrawer, (beforeValue) : void => {
+  if (beforeValue) {
+    myPageDrawer.value = true
+  } else {
+    myPageDrawer.value = false
+  }
+})
 
 watch([drawer, myPageDrawer], ([], []) => {
-  if (computedDrawer.value === true && computedMyPageDrawer.value === true) {
-    computedDrawer.value = false
+  if (drawer.value === true && myPageDrawer.value === true) {
+    drawer.value = false
   }
 })
 
