@@ -3,12 +3,8 @@
       <!-- サイドバーのコンテンツ -->
       <v-list>
         <v-list-item v-for="(item, index) in myPages" :key="item.title" link>
-          <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
             <v-btn variant="text" @click="myPagesList(index)">{{ item.title }}</v-btn>
-          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
