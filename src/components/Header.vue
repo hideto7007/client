@@ -17,10 +17,6 @@
           <v-icon left>mdi-logout</v-icon> 
         </v-btn>
 
-        <v-btn variant="text" icon="mdi-twitter"></v-btn>
-        <v-btn variant="text" icon="mdi-facebook"></v-btn>
-        <v-btn variant="text" icon="mdi-instagram"></v-btn>
-
         <v-btn variant="text" icon="mdi-dots-vertical" @click="myPageDialogAction"></v-btn>
       </v-app-bar>
 
