@@ -1,5 +1,8 @@
 <template>
-  <v-navigation-drawer>
+  <v-navigation-drawer
+    location="left"
+    permanent
+    width="120">
     <!-- サイドバーのコンテンツ -->
     <v-list>
       <v-list-item v-for="(item, index) in pages" :key="item.page" link>
@@ -12,7 +15,6 @@
 <script setup lang="ts">
 import { ref, defineEmits  } from 'vue'
 import router from '../router';
-
 
 const emit = defineEmits()
 
