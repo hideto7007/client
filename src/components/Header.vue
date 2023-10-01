@@ -3,7 +3,8 @@
   <v-card>
     <v-layout>
       <v-app-bar
-        color="secondary"
+        color="teal-darken-4"
+        image="https://picsum.photos/1920/1080?random"
         prominent
       >
         <v-app-bar-nav-icon variant="text" @click.stop="pageDrawer = !pageDrawer"></v-app-bar-nav-icon>
