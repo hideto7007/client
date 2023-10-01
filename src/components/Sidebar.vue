@@ -3,7 +3,7 @@
     <!-- サイドバーのコンテンツ -->
     <v-list>
       <v-list-item v-for="(item, index) in pages" :key="item.page" link>
-          <v-btn variant="text" @click="pageTransition(index)">{{ item.page }}</v-btn>
+        <v-btn variant="text" @click="pageTransition(index)">{{ item.page }}</v-btn>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -44,6 +44,6 @@ const pageTransition = (key: number) : void => {
   console.log(pages.value[key].url)
   router.push(pages.value[key].url)
   // Header.vue側にメニューバー非表示にするために送信
-  emit('drawer', false);
+  emit('pageDrawer', false);
 }
 </script>

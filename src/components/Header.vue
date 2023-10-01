@@ -6,7 +6,7 @@
         color="secondary"
         prominent
       >
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon variant="text" @click.stop="pageDrawer = !pageDrawer"></v-app-bar-nav-icon>
 
         <v-toolbar-title>Finance App</v-toolbar-title>
 
@@ -20,7 +20,7 @@
         <v-btn variant="text" icon="mdi-facebook"></v-btn>
         <v-btn variant="text" icon="mdi-instagram"></v-btn>
 
-        <v-btn variant="text" icon="mdi-dots-vertical" @click.stop="myPageDrawer = !myPageDrawer"></v-btn>
+        <v-btn variant="text" icon="mdi-dots-vertical" @click="myPageDialogAction"></v-btn>
       </v-app-bar>
 
       <v-main>
@@ -28,13 +28,15 @@
 
     </v-layout>
   </v-card>
-    <div v-if="drawer">
+    <div v-if="pageDrawer">
       <!-- ページメニュー -->
-      <Sidebar @drawer="toggleDrawer" />
+      <Sidebar @pageDrawer="togglePageDrawer" />
     </div>
-    <div v-if="myPageDrawer">
-      <!-- 設定一覧 -->
-      <MyPage @myPageDrawer="toggleMyPageDrawer" />
+    <div v-if="myPageDialog">
+      <!-- 設定一覧 :dialog="true"-->
+      <MyPage
+        :dialog="true"
+        @myPageDialog="toggleMyPageDialog" />
     </div>
   </div>
 </template>
@@ -46,41 +48,41 @@ import Sidebar from '../components/Sidebar.vue'
 import MyPage from '../components/MyPage.vue'
 
 
-const drawer = ref<boolean>(false)
-const myPageDrawer = ref<boolean>(false)
+const pageDrawer = ref<boolean>(false)
+const myPageDialog = ref<boolean>(false)
 
-const toggleDrawer = (val: boolean) => {
-  drawer.value = val
+const togglePageDrawer = (val: boolean) : void => {
+  pageDrawer.value = val
 }
 
-const toggleMyPageDrawer = (val: boolean) => {
-  myPageDrawer.value = val
+const myPageDialogAction = () : void => {
+  myPageDialog.value = !myPageDialog.value
 }
 
-watch(drawer, (beforeValue) : void => {
+const toggleMyPageDialog = (val: boolean) : void => {
+  myPageDialog.value = val
+}
+
+watch(pageDrawer, (beforeValue) : void => {
   if (beforeValue) {
-    drawer.value = true
+    pageDrawer.value = true
   } else {
-    drawer.value = false
+    pageDrawer.value = false
   }
 })
 
-watch(myPageDrawer, (beforeValue) : void => {
+watch(myPageDialog, (beforeValue) : void => {
   if (beforeValue) {
-    myPageDrawer.value = true
+    myPageDialog.value = true
   } else {
-    myPageDrawer.value = false
+    myPageDialog.value = false
   }
 })
 
-watch([drawer, myPageDrawer], ([], []) => {
-  if (drawer.value === true && myPageDrawer.value === true) {
-    drawer.value = false
-  }
-})
 
 const logout = () : void => {
   console.log("logout")
 }
+
 
 </script>

@@ -1,5 +1,12 @@
 <template>
-    <v-navigation-drawer>
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">メニュー</span>
+        </v-card-title>
       <!-- サイドバーのコンテンツ -->
       <v-list>
         <v-list-item v-for="(item, index) in myPages" :key="item.title" link>
@@ -7,18 +14,34 @@
             <v-btn variant="text" @click="myPagesList(index)">{{ item.title }}</v-btn>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
-  </template>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="close">
+            <v-icon
+              start
+              icon="mdi-arrow-left"
+            ></v-icon>
+            Back
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+</template>
   
 <script setup lang="ts">
-import { ref, defineEmits  } from 'vue'
+import { ref, defineEmits, defineProps, onMounted  } from 'vue'
   
 const emit = defineEmits()
+const dialog = ref<boolean>(false)
   
 interface MyPage {
   title: string;
   icon: string;
 }
+
+const props = defineProps<{
+  dialog: boolean,
+}>()
 
 const myPages = ref<MyPage[]>([
   {
@@ -43,11 +66,21 @@ const myPages = ref<MyPage[]>([
   },
 ])
   
-  const myPagesList = (key: number) : void => {
-    console.log(myPages.value[key].title)
-    // Header.vue側にメニューバー非表示にするために送信
-    emit('myPageDrawer', false);
+const myPagesList = (key: number) : void => {
+  console.log(myPages.value[key].title)
+}
+
+const close = () : void => {
+  dialog.value = false
+  // Header.vue側にメニューバー非表示にするために送信
+  emit('myPageDialog', false)
+}
+
+onMounted(() => {
+  if (props.dialog) {
+    dialog.value = true
   }
+})
 
 </script>
   
