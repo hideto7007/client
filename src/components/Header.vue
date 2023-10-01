@@ -79,10 +79,8 @@ watch(myPageDialog, (beforeValue) : void => {
   }
 })
 
-
 const logout = () : void => {
   console.log("logout")
 }
-
 
 </script>

@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { ref, defineEmits  } from 'vue'
-// import { defineProps, defineEmits } from '@nuxtjs/composition-api'
 import router from '../router';
+
 
 const emit = defineEmits()
 
@@ -46,4 +46,5 @@ const pageTransition = (key: number) : void => {
   // Header.vue側にメニューバー非表示にするために送信
   emit('pageDrawer', false);
 }
+
 </script>
