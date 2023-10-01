@@ -7,7 +7,6 @@
         <v-card-title>
           <span class="text-h5">メニュー</span>
         </v-card-title>
-      <!-- サイドバーのコンテンツ -->
       <v-list>
         <v-list-item v-for="(item, index) in myPages" :key="item.title" link>
             <v-icon>{{ item.icon }}</v-icon>
@@ -30,6 +29,7 @@
   
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, onMounted  } from 'vue'
+import router from '../router'
   
 
 const emit = defineEmits()
@@ -38,6 +38,7 @@ const dialog = ref<boolean>(false)
 interface MyPage {
   title: string;
   icon: string;
+  url: string;
 }
 
 const props = defineProps<{
@@ -48,27 +49,33 @@ const myPages = ref<MyPage[]>([
   {
     title: 'ホーム',
     icon: 'mdi-home',
+    url: 'no path'
   },
   {
     title: 'ダッシュボード',
     icon: 'mdi-view-dashboard',
+    url: 'no path'
   },
   {
     title: '設定',
     icon: 'mdi-cog',
+    url: 'no path'
   },
   {
     title: 'アカウント',
     icon: 'mdi-account-circle',
+    url: 'no path'
   },
   {
     title: 'バージョン',
     icon: '$vuetify',
+    url: '/mypage/version'
   },
 ])
   
 const myPagesList = (key: number) : void => {
   console.log(myPages.value[key].title)
+  router.push(myPages.value[key].url)
 }
 
 const close = () : void => {
