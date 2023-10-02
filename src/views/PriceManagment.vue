@@ -41,7 +41,6 @@
     <v-btn @click="handleReset">
       clear
     </v-btn>
-    {{ test }}
   </div>
 </template>
 
@@ -100,25 +99,25 @@ const handleSubmit = (): void => {
 
 
 async function fetchData(): Promise<void> {
-  const queryList: string[] = []
-  queryList.push("money_received=" + moneyReceivedValue.value)
-  queryList.push("bouns=" + bounsValue.value)
-  queryList.push("fixed_cost=" + fixedCostValue.value)
-  queryList.push("loan=" + loanValue.value)
-  queryList.push("private=" + privateValue.value)
-  const fullApi: string = api + "?" + queryList.join('&')
-  console.log(fullApi)
-  try {
-    axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:5173';
-    axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-    axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type';
-    const response: AxiosResponse = await axios.get(fullApi); // 任意のAPIエンドポイントを指定
-    const data = response.data; // レスポンスからデータを取得
-    test.value = data
-    console.log('Received data:', data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+    const queryList: string[] = []
+    queryList.push("money_received=" + moneyReceivedValue.value)
+    queryList.push("bouns=" + bounsValue.value)
+    queryList.push("fixed_cost=" + fixedCostValue.value)
+    queryList.push("loan=" + loanValue.value)
+    queryList.push("private=" + privateValue.value)
+    const fullApi: string = api + "?" + queryList.join('&')
+    console.log(fullApi)
+    try {
+      axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:5173';
+      axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+      axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type';
+      const response: AxiosResponse = await axios.get(fullApi); // 任意のAPIエンドポイントを指定
+      const data = response.data; // レスポンスからデータを取得
+      test.value = data
+      console.log('Received data:', data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
 }
 
 const handleReset = (): void => {

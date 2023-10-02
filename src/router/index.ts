@@ -4,12 +4,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/pricemanagement',
     name: 'pricemanagement',
-    component: () => import('../components/PriceManagment.vue')
+    component: () => import('../views/PriceManagment.vue')
   },
   {
     path: '/about',
     name: 'about',
-    component: () => import('../components/AboutView.vue')
+    component: () => import('../views/AboutView.vue')
+  },
+  {
+    path: '/mypage/version',
+    name: 'version',
+    component: () => import('../views/mypage/Version.vue')
   }
 ]
 
