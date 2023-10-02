@@ -76,6 +76,7 @@ const myPages = ref<MyPage[]>([
 const myPagesList = (key: number) : void => {
   console.log(myPages.value[key].title)
   router.push(myPages.value[key].url)
+  emit('myPageDialog', false)
 }
 
 const close = () : void => {
