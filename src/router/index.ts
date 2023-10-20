@@ -18,9 +18,11 @@ const routes: Array<RouteRecordRaw> = [
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL), // 修正点
-  routes
-})
+const isProduction = import.meta.env.MODE === 'production';
 
-export default router
+const router = createRouter({
+  history: createWebHistory(isProduction ? '/pricemanagement/' : '/'),
+  routes
+});
+
+export default router;
