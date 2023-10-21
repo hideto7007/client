@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
 // const isProduction = import.meta.env.MODE === 'production';
 
 const router = createRouter({
-  // history: createWebHistory(isProduction ? '/pricemanagement/' : '/'),
+  history: createWebHistory(import.meta.env.BASE_URL), // 修正点
   routes
 });
 
