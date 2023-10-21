@@ -18,10 +18,10 @@ const routes: Array<RouteRecordRaw> = [
   }
 ]
 
-const isProduction = import.meta.env.MODE === 'production';
+// const isProduction = import.meta.env.MODE === 'production';
 
 const router = createRouter({
-  history: createWebHistory(isProduction ? '/pricemanagement/' : '/'),
+  // history: createWebHistory(isProduction ? '/pricemanagement/' : '/'),
   routes
 });
 
