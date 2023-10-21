@@ -55,11 +55,9 @@ const bounsValue = ref<number>(0)
 const fixedCostValue = ref<number>(0)
 const loanValue = ref<number>(0)
 const privateValue = ref<number>(0)
-
 const test = ref<string>('')
 
 const api: string = "http://localhost:8080/api/price/"
-// const api: string = "http://localhost:8080/delftstack/"
 
 type priceData = {
   moneyReceived: number, 
@@ -121,6 +119,11 @@ async function fetchData(): Promise<void> {
 }
 
 const handleReset = (): void => {
+  moneyReceivedValue.value = 0;
+  bounsValue.value = 0;
+  fixedCostValue.value = 0;
+  loanValue.value = 0;
+  privateValue.value = 0;
   localStorage.clear()
 }
 
