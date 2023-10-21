@@ -9,7 +9,7 @@
       >
         <v-app-bar-nav-icon variant="text" @click.stop="pageDrawer = !pageDrawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>Finance App</v-toolbar-title>
+        <v-toolbar-title type="button" @click="returnTitle">Finance App</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -43,7 +43,7 @@
 import { ref, watch } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
 import MyPage from '../components/MyPage.vue'
-
+import router from '../router'
 
 const pageDrawer = ref<boolean>(false)
 const myPageDialog = ref<boolean>(false)
@@ -58,6 +58,11 @@ const myPageDialogAction = () : void => {
 
 const toggleMyPageDialog = (val: boolean) : void => {
   myPageDialog.value = val
+}
+
+const returnTitle = () : void => {
+  router.push('/')
+  console.log("click")
 }
 
 watch(pageDrawer, (beforeValue) : void => {
