@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import axios, { AxiosResponse } from 'axios';
+import ApiEndpoint from "../common/apiEndpoint";
 
 const localStorageKeyName = ref<string>('sumitFpInfo')
 
@@ -55,9 +55,6 @@ const bounsValue = ref<number>(0)
 const fixedCostValue = ref<number>(0)
 const loanValue = ref<number>(0)
 const privateValue = ref<number>(0)
-const test = ref<string>('')
-
-const api: string = "http://localhost:8080/api/price/"
 
 type priceData = {
   moneyReceived: number, 
@@ -103,27 +100,23 @@ async function fetchData(): Promise<void> {
     queryList.push("fixed_cost=" + fixedCostValue.value)
     queryList.push("loan=" + loanValue.value)
     queryList.push("private=" + privateValue.value)
-    const fullApi: string = api + "?" + queryList.join('&')
-    console.log(fullApi)
+    const fullPrames: string = "?" + queryList.join('&')
     try {
-      axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:5173';
-      axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-      axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type';
-      const response: AxiosResponse = await axios.get(fullApi); // 任意のAPIエンドポイントを指定
-      const data = response.data; // レスポンスからデータを取得
-      test.value = data
-      console.log('Received data:', data);
+      const response = await ApiEndpoint.getPriceManagement(fullPrames)
+      const data = response.data // レスポンスからデータを取得
+      // test.value = datas
+      console.log('Received data:', data)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error)
     }
 }
 
 const handleReset = (): void => {
-  moneyReceivedValue.value = 0;
-  bounsValue.value = 0;
-  fixedCostValue.value = 0;
-  loanValue.value = 0;
-  privateValue.value = 0;
+  moneyReceivedValue.value = 0
+  bounsValue.value = 0
+  fixedCostValue.value = 0
+  loanValue.value = 0
+  privateValue.value = 0
   localStorage.clear()
 }
 

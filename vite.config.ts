@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/api': {
+      "^/api*": {
         target: 'http://localhost:8080', // このURLをサーバーのベースURLに置き換えてください
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace("^/api", ""),
       },
     },
   },

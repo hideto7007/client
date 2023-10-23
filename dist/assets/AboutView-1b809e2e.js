@@ -1,0 +1,1 @@
+import{o as n,a,i as r}from"./index-9682fbee.js";const _=(t,e)=>{const o=t.__vccOpts||t;for(const[s,c]of e)o[s]=c;return o},i={},d={class:"about"},l=r("h1",null,"This is an about page",-1),u=[l];function f(t,e){return n(),a("div",d,u)}const p=_(i,[["render",f]]);export{p as default};
