@@ -2,31 +2,31 @@
   <div>
     <v-text-field
       v-model="moneyReceivedValue"
-      label="月収"
+      label="手取の月収"
       type="number"
     ></v-text-field>
 
     <v-text-field
       v-model="bounsValue"
-      label="ボーナス"
+      label="ボーナス(1年の合計)"
       type="number"
     ></v-text-field>
 
     <v-text-field
       v-model="fixedCostValue"
-      label="固定費"
+      label="固定費(家賃、光熱費、通信費、サブスクリプションなどなど・・・)"
       type="number"
     ></v-text-field>
 
     <v-text-field
       v-model="loanValue"
-      label="ローン"
+      label="ローン(教育、車)"
       type="number"
     ></v-text-field>
 
     <v-text-field
       v-model="privateValue"
-      label="プライベート"
+      label="プライベート(月に自信が自由に使える)"
       type="number"
     ></v-text-field>
 
@@ -42,19 +42,36 @@
       clear
     </v-btn>
   </div>
+  <v-card
+    class="mx-auto"
+    max-width="500"
+  >
+    <v-card-text>
+      <p class="text-h4 text--primary">
+        月の貯蓄額 {{ leftAmountValue }} 円
+      </p><v-card-actions />
+      <p class="text-h4 text--primary">
+        年の貯蓄額 {{ totalAmountValue }} 円
+      </p>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint";
+import router from '../router'
 
-const localStorageKeyName = ref<string>('sumitFpInfo')
+const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
+const localStorageKeyNameResult = ref<string>('result')
 
 const moneyReceivedValue = ref<number>(0)
 const bounsValue = ref<number>(0)
 const fixedCostValue = ref<number>(0)
 const loanValue = ref<number>(0)
 const privateValue = ref<number>(0)
+const leftAmountValue = ref<number>(0)
+const totalAmountValue = ref<number>(0)
 
 type priceData = {
   moneyReceived: number, 
@@ -64,8 +81,14 @@ type priceData = {
   privateValue: number
 }
 
-const loadFromLocalStorage = () => {
-  const storedData = localStorage.getItem(localStorageKeyName.value)
+type amountData = {
+  leftAmount: number,
+  totalAmount: number
+}
+
+
+const loadFromLocalStorage = (): void => {
+  const storedData = localStorage.getItem(localStorageKeyNameSumitFpInfo.value)
 
   if (storedData) {
     const parsedData: priceData = JSON.parse(storedData)
@@ -74,6 +97,16 @@ const loadFromLocalStorage = () => {
     fixedCostValue.value = parsedData.fixedCost
     loanValue.value = parsedData.loan
     privateValue.value = parsedData.privateValue
+  }
+}
+
+const getPriceManagementLocalStorage = (): void => {
+  const storedData = localStorage.getItem(localStorageKeyNameResult.value)
+
+  if (storedData) {
+    const parsedData: amountData = JSON.parse(storedData)
+    leftAmountValue.value = parsedData.leftAmount
+    totalAmountValue.value = parsedData.totalAmount
   }
 }
 
@@ -87,13 +120,13 @@ const handleSubmit = (): void => {
     privateValue: privateValue.value,
   }
 
-  localStorage.setItem(localStorageKeyName.value, JSON.stringify(dataToSave))
+  localStorage.setItem(localStorageKeyNameSumitFpInfo.value, JSON.stringify(dataToSave))
 
-  fetchData()
+  getPriceManagementFetchData()
 }
 
 
-async function fetchData(): Promise<void> {
+async function getPriceManagementFetchData(): Promise<void> {
     const queryList: string[] = []
     queryList.push("money_received=" + moneyReceivedValue.value)
     queryList.push("bouns=" + bounsValue.value)
@@ -104,8 +137,14 @@ async function fetchData(): Promise<void> {
     try {
       const response = await ApiEndpoint.getPriceManagement(fullPrames)
       const data = response.data // レスポンスからデータを取得
-      // test.value = datas
-      console.log('Received data:', data)
+      const amountDataResult: amountData = {
+        leftAmount: data.message.result.left_amount,
+        totalAmount: data.message.result.total_amount
+      }
+      localStorage.setItem(localStorageKeyNameResult.value, JSON.stringify(amountDataResult))
+
+      console.log('Received data:', amountDataResult)
+      router.go(0)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
@@ -117,11 +156,14 @@ const handleReset = (): void => {
   fixedCostValue.value = 0
   loanValue.value = 0
   privateValue.value = 0
+  leftAmountValue.value = 0
+  totalAmountValue.value = 0
   localStorage.clear()
 }
 
 // ページ読み込み時に localStorage からデータを読み込む
 onMounted(() => {
   loadFromLocalStorage()
+  getPriceManagementLocalStorage()
 })
 </script>
