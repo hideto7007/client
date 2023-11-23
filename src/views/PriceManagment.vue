@@ -1,6 +1,7 @@
 <template>
-  <h1>月と年間の貯金額算出</h1>
-  <br>
+  <div class="price-title">
+    <h1>月と年間の貯金額算出</h1>
+  </div>
   <div>
     <v-text-field 
       v-for="(item) in priceList" :key="item.label"
@@ -12,12 +13,15 @@
     <v-btn
       class="me-4"
       type="submit"
+      color="success"
       @click="handleSubmit"
     >
       submit
     </v-btn>
 
-    <v-btn @click="handleReset">
+    <v-btn 
+      @click="handleReset"
+      color="blue-grey">
       clear
     </v-btn>
   </div>
@@ -25,7 +29,7 @@
     class="mx-auto"
     max-width="500"
   >
-    <v-card-text>
+    <v-card-text class="card-style">
       <p class="text-h4 text--primary">
         月の貯蓄額 {{ leftAmountValue }} 円
       </p><v-card-actions />
@@ -187,3 +191,19 @@ onMounted(() => {
   getPriceManagementLocalStorage()
 })
 </script>
+
+
+<style scoped>
+
+.price-title {
+  padding: 1em;
+  color: #0000FF;
+}
+
+.card-style{
+  padding: 3em;
+  color: aliceblue;
+  background-color: #0606f8;
+}
+
+</style>
