@@ -26,7 +26,7 @@
 
     <v-text-field
       v-model="privateValue"
-      label="プライベート(月に自信が自由に使える)"
+      label="プライベート(月に自身が自由に使える)"
       type="number"
     ></v-text-field>
 
@@ -60,7 +60,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint";
-import router from '../router'
+// import router from '../router'
+
+// TBD : 任意保険等のフォーム項目も追加する
+// ボタン押下時に値が変更されない問題解決する
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
@@ -143,8 +146,9 @@ async function getPriceManagementFetchData(): Promise<void> {
       }
       localStorage.setItem(localStorageKeyNameResult.value, JSON.stringify(amountDataResult))
 
+      leftAmountValue.value = amountDataResult.leftAmount
+      totalAmountValue.value = amountDataResult.totalAmount
       console.log('Received data:', amountDataResult)
-      router.go(0)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
