@@ -1,32 +1,11 @@
 <template>
+  <h1>月と年間の貯金額算出</h1>
+  <br>
   <div>
-    <v-text-field
-      v-model="moneyReceivedValue"
-      label="手取の月収"
-      type="number"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="bounsValue"
-      label="ボーナス(1年の合計)"
-      type="number"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="fixedCostValue"
-      label="固定費(家賃、光熱費、通信費、サブスクリプションなどなど・・・)"
-      type="number"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="loanValue"
-      label="ローン(教育、車)"
-      type="number"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="privateValue"
-      label="プライベート(月に自身が自由に使える)"
+    <v-text-field 
+      v-for="(item) in priceList" :key="item.label"
+      v-model="item.vModel"
+      :label="item.label"
       type="number"
     ></v-text-field>
 
@@ -58,12 +37,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, Ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint";
-// import router from '../router'
 
 // TBD : 任意保険等のフォーム項目も追加する
-// ボタン押下時に値が変更されない問題解決する
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
@@ -73,6 +50,7 @@ const bounsValue = ref<number>(0)
 const fixedCostValue = ref<number>(0)
 const loanValue = ref<number>(0)
 const privateValue = ref<number>(0)
+const insuranceValue = ref<number>(0)
 const leftAmountValue = ref<number>(0)
 const totalAmountValue = ref<number>(0)
 
@@ -81,13 +59,46 @@ type priceData = {
   bouns: number,
   fixedCost: number,
   loan: number,
-  privateValue: number
+  private: number,
+  insurance: number
 }
 
 type amountData = {
   leftAmount: number,
   totalAmount: number
 }
+
+interface Item {
+  label: string;
+  vModel: Ref<number>;
+}
+
+const priceList = ref<Item[]>([
+  {
+    label: '手取の月収',
+    vModel: moneyReceivedValue,
+  },
+  {
+    label: 'ボーナス(1年の合計)',
+    vModel: bounsValue,
+  },
+  {
+    label: '固定費(家賃、光熱費、通信費、サブスクリプション、積み立て投資などなど・・・)',
+    vModel: fixedCostValue,
+  },
+  {
+    label: 'ローン(教育、車)',
+    vModel: loanValue,
+  },
+  {
+    label: 'プライベート(月に自身が自由に使える)',
+    vModel: privateValue,
+  },
+  {
+    label: '保険(生命保険、任意保険など)',
+    vModel: insuranceValue,
+  },
+])
 
 
 const loadFromLocalStorage = (): void => {
@@ -99,7 +110,8 @@ const loadFromLocalStorage = (): void => {
     bounsValue.value = parsedData.bouns
     fixedCostValue.value = parsedData.fixedCost
     loanValue.value = parsedData.loan
-    privateValue.value = parsedData.privateValue
+    privateValue.value = parsedData.private
+    insuranceValue.value = parsedData.insurance
   }
 }
 
@@ -120,7 +132,8 @@ const handleSubmit = (): void => {
     bouns: bounsValue.value,
     fixedCost: fixedCostValue.value,
     loan: loanValue.value,
-    privateValue: privateValue.value,
+    private: privateValue.value,
+    insurance: insuranceValue.value,
   }
 
   localStorage.setItem(localStorageKeyNameSumitFpInfo.value, JSON.stringify(dataToSave))
@@ -136,7 +149,9 @@ async function getPriceManagementFetchData(): Promise<void> {
     queryList.push("fixed_cost=" + fixedCostValue.value)
     queryList.push("loan=" + loanValue.value)
     queryList.push("private=" + privateValue.value)
+    queryList.push("insurance=" + insuranceValue.value)
     const fullPrames: string = "?" + queryList.join('&')
+    console.log(fullPrames)
     try {
       const response = await ApiEndpoint.getPriceManagement(fullPrames)
       const data = response.data // レスポンスからデータを取得
@@ -162,6 +177,7 @@ const handleReset = (): void => {
   privateValue.value = 0
   leftAmountValue.value = 0
   totalAmountValue.value = 0
+  insuranceValue.value = 0
   localStorage.clear()
 }
 
