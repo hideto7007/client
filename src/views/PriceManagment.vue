@@ -16,13 +16,13 @@
       color="success"
       @click="handleSubmit"
     >
-      submit
+      計算
     </v-btn>
 
     <v-btn 
       @click="handleReset"
       color="blue-grey">
-      clear
+      クリア
     </v-btn>
   </div>
   <v-card
@@ -146,7 +146,7 @@ const handleSubmit = (): void => {
 }
 
 
-async function getPriceManagementFetchData(): Promise<void> {
+const getPriceManagementFetchData = async (): Promise<void> => {
     const queryList: string[] = []
     queryList.push("money_received=" + moneyReceivedValue.value)
     queryList.push("bouns=" + bounsValue.value)
