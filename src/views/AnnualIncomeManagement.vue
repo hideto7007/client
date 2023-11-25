@@ -120,7 +120,7 @@
                     v-for="(item) in annualIncomeList" :key="item.label"
                     v-model="item.vModel"
                     :label="item.label"
-                    type="number | string"
+                    type="string"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -206,7 +206,7 @@ const dialog = ref<boolean>(false)
 const dialogDelete = ref<boolean>(false)
 const labelList = ref<string[]>(['日付', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
 const keyList = ref<string[]>(['payment_date', 'age', 'industry', 'total_amount', 'deduction_amount', 'take_home_amount', 'classification'])
-const desserts = ref<string[] | number[]>([])
+const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
@@ -444,7 +444,7 @@ const save = () => {
 };
 
 
-const  getRangeDateFetchData = async(): Promise<void> => {
+const getRangeDateFetchData = async(): Promise<void> => {
     const queryList: string[] = []
     queryList.push("user_id=" + userId.value)
     const fullPrames: string = "?" + queryList.join('&')
@@ -466,9 +466,37 @@ const  getRangeDateFetchData = async(): Promise<void> => {
 }
 
 
+const getIncomeDataFetchData = async(): Promise<void> => {
+    const queryList: string[] = []
+    queryList.push("start_date=" + startDate.value)
+    queryList.push("end_date=" + endDate.value)
+    queryList.push("user_id=" + userId.value)
+    const fullPrames: string = "?" + queryList.join('&')
+    try {
+      const response = await ApiEndpoint.getIncomeData(fullPrames)
+      const dataList = response.data.result // レスポンスからデータを取得
+
+      for (const data of dataList) {
+        desserts.value.push({
+            payment_date: data.PaymentDate.slice(0, 10),
+            age: data.Age,
+            industry: data.Industry,
+            total_amount: data.TotalAmount,
+            deduction_amount: data.DeductionAmount,
+            take_home_amount: data.TakeHomeAmount,
+            classification: data.Classification
+        })
+      }
+
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+}
+
 // ページ読み込み
-onMounted(() => {
-    getRangeDateFetchData()
+onMounted(async () => {
+    await getRangeDateFetchData()
+    getIncomeDataFetchData()
 })
 
 watch(dialog, (val: boolean): void => {
@@ -476,7 +504,7 @@ watch(dialog, (val: boolean): void => {
 })
 
 watch(dialogDelete, (val: boolean) : void => {
-    val || dialogDelete()
+    val || closeDelete()
 })
 
 </script>
