@@ -125,7 +125,6 @@ const isUpdatable = computed<boolean>(() => {
   // end が start より過去の値になっているなら false (同日は可)
   if (tmpEndDate.value !== undefined && tmpStartDate.value !== undefined) {
     const diffDays = tmpEndDate.value.valueOf() - tmpStartDate.value.valueOf()
-    console.log(diffDays)
     if (diffDays < 0) {
         return false
     }
@@ -136,7 +135,7 @@ const isUpdatable = computed<boolean>(() => {
 
 const formatDate = (date: Date | undefined | string): string => {
   if (!date) {
-    return ''; // もし日付が undefined の場合、空文字列を返すなど、適切な処理を行う
+    return ''
   }
   else if (typeof date === "string") {
     return date

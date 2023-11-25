@@ -73,8 +73,8 @@ type amountData = {
 }
 
 interface Item {
-  label: string;
-  vModel: Ref<number>;
+  label: string
+  vModel: Ref<number>
 }
 
 const priceList = ref<Item[]>([
@@ -167,7 +167,6 @@ const getPriceManagementFetchData = async (): Promise<void> => {
 
       leftAmountValue.value = amountDataResult.leftAmount
       totalAmountValue.value = amountDataResult.totalAmount
-      console.log('Received data:', amountDataResult)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
