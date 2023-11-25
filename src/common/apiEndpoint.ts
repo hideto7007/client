@@ -4,6 +4,30 @@ class ApiEndpoint {
   getPriceManagement(params: any): Promise<any> {
     return http.get("/api/price/" + params);
   }
+  
+  getIncomeData(params: any): Promise<any> {
+    return http.get("/api/income_data/" + params);
+  }
+
+  getRangeDate(params: any): Promise<any> {
+    return http.get("/api/range_date/" + params);
+  }
+
+  getYearsIncomeDate(params: any): Promise<any> {
+    return http.get("/api/years_income_date/" + params);
+  }
+
+  incomeCreate(): Promise<any> {
+    return http.post("/api/income_create/");
+  }
+
+  incomeUpdate(): Promise<any> {
+    return http.put("/api/income_update/");
+  }
+
+  incomeDelete(): Promise<any> {
+    return http.delete("/api/income_delete/");
+  }
 
   get(id: any): Promise<any> {
     return http.get(`/api/books/${id}`);

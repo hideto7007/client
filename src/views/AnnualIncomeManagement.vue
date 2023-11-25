@@ -1,74 +1,78 @@
 <template>
-  <div v-if="screenFlag && startDate !== undefined && endDate !== undefined && tmpStartDate !== undefined && tmpEndDate !== undefined">
-    <v-menu
-      v-model="isMenuOpened"
-      transition="slide-y-transition"
-      :close-on-content-click="false"
-      update:modelValue="(opened) => opened || closeMenu()"
-    >
-      <template v-slot:activator="{ props }">
-        <v-text-field
-          :model-value="`${formatDate(startDate)}〜${formatDate(endDate)}`"
-          v-bind="props"
-          label="期間"
-          density="comfortable"
-          hide-details
-        />
-      </template>
-
-      <v-card class="pa-3">
-        <v-card-title class="mb-3">
-          <v-icon icon="mdi-calendar-check" class="mt-n1 mr-2" size="md" />期間
-        </v-card-title>
-
-        <v-card-text>
-          <p class="tmpDate mb-3">
-            <span class="tmpDate__item" :class="{'is-active': isTmpStartDateChanged}">
-              {{ formatDate(tmpStartDate) }}
-            </span>
-            <span>&nbsp;-&nbsp;</span>
-            <span class="tmpDate__item" :class="{'is-active': isTmpEndDateChanged}">
-              {{ formatDate(tmpEndDate) }}
-            </span>
-          </p>
-
-          <v-row class="mb-5">
-            <v-col cols="auto">
-              <p class="text-overline font-weight-bold">FROM</p>
-              <Datepicker
-                v-model="tmpStartDate"
-                v-bind="startDatepickerOptions"
-              />
-            </v-col>
-
-            <v-col cols="auto">
-              <p class="text-overline font-weight-bold">TO</p>
-              <Datepicker
-                v-model="tmpEndDate"
-                v-bind="endDatepickerOptions"
-              />
-            </v-col>
-          </v-row>
-
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-update"
-            :disabled="!isUpdatable"
-            class="px-8 mr-4"
-            @click="updatePeriods"
-          >
-            更新
-          </v-btn>
-          <v-btn
-            prepend-icon="mdi-cancel"
-            @click="closeMenu"
-          >
-            キャンセル
-          </v-btn>
-        </v-card-text>
-      </v-card>
-    </v-menu>
-  </div>
+    <div v-if="screenFlag && startDate !== undefined && endDate !== undefined && tmpStartDate !== undefined && tmpEndDate !== undefined">
+      <v-menu
+        v-model="isMenuOpened"
+        transition="slide-y-transition"
+        :close-on-content-click="false"
+        update:modelValue="(opened) => opened || closeMenu()"
+      >
+        <template v-slot:activator="{ props }">
+         <v-col sm="3">
+          <v-text-field
+            :model-value="`${formatDate(startDate)}〜${formatDate(endDate)}`"
+            v-bind="props"
+            label="表示期間"
+            density="comfortable"
+            hide-details
+          />
+         </v-col>
+        </template>
+  
+        <v-card class="pa-3">
+          <v-card-title class="mb-3">
+            <v-icon icon="mdi-calendar-check" class="mt-n1 mr-2" size="md" />検索期間
+          </v-card-title>
+  
+          <v-card-text>
+            <p class="tmpDate mb-3">
+              <span class="tmpDate__item" :class="{'is-active': isTmpStartDateChanged}">
+                {{ formatDate(tmpStartDate) }}
+              </span>
+              <span>&nbsp;-&nbsp;</span>
+              <span class="tmpDate__item" :class="{'is-active': isTmpEndDateChanged}">
+                {{ formatDate(tmpEndDate) }}
+              </span>
+            </p>
+  
+            <v-row class="mb-5">
+              <v-col cols="auto">
+                <p class="text-overline font-weight-bold">FROM</p>
+                <Datepicker
+                  v-model="tmpStartDate"
+                  v-bind="startDatepickerOptions"
+                  @update:modelValue="handleUpdateStartDatepicker"
+                />
+              </v-col>
+  
+              <v-col cols="auto">
+                <p class="text-overline font-weight-bold">TO</p>
+                <Datepicker
+                  v-model="tmpEndDate"
+                  v-bind="endDatepickerOptions"
+                  @update:modelValue="handleUpdateEndDatepicker"
+                />
+              </v-col>
+            </v-row>
+  
+            <v-btn
+              color="primary"
+              prepend-icon="mdi-update"
+              :disabled="!isUpdatable"
+              class="px-8 mr-4"
+              @click="updatePeriods"
+            >
+              検索
+            </v-btn>
+            <v-btn
+              prepend-icon="mdi-cancel"
+              @click="closeMenu"
+            >
+              キャンセル
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -76,7 +80,6 @@ import { ref, onMounted, computed } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { format, differenceInDays } from 'date-fns'
 
 
 const startDate = ref<Date>()
@@ -121,7 +124,8 @@ const isUpdatable = computed<boolean>(() => {
   }
   // end が start より過去の値になっているなら false (同日は可)
   if (tmpEndDate.value !== undefined && tmpStartDate.value !== undefined) {
-    const diffDays = differenceInDays(tmpEndDate.value, tmpStartDate.value)
+    const diffDays = tmpEndDate.value.valueOf() - tmpStartDate.value.valueOf()
+    console.log(diffDays)
     if (diffDays < 0) {
         return false
     }
@@ -130,8 +134,15 @@ const isUpdatable = computed<boolean>(() => {
   return true
 })
 
-const formatDate = (date: Date): string => {
-  return format(date, 'yyyy-M-d')
+const formatDate = (date: Date | undefined | string): string => {
+  if (!date) {
+    return ''; // もし日付が undefined の場合、空文字列を返すなど、適切な処理を行う
+  }
+  else if (typeof date === "string") {
+    return date
+  } else {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+  }
 }
 
 // Vue Datepicker に渡すオプション

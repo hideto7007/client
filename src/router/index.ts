@@ -12,9 +12,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/PriceManagment.vue')
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('../views/AboutView.vue')
+    path: '/annualincomemanagement',
+    name: 'annualincomemanagement',
+    component: () => import('../views/AnnualIncomeManagement.vue')
   },
   {
     path: '/mypage/version',
