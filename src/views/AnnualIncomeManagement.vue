@@ -76,7 +76,13 @@
     <v-data-table
       :headers="headers"
       :items="desserts"
-      :sort-by="[{ key: 'calories', order: 'asc' }]"
+      :sort-by="[
+      { key: keyList[0], order: sort },
+      { key: keyList[1], order: sort },
+      { key: keyList[2], order: sort },
+      { key: keyList[3], order: sort },
+      { key: keyList[4], order: sort },
+      { key: keyList[5], order: sort }]"
     >
     <template v-slot:top>
       <v-toolbar
@@ -110,20 +116,49 @@
 
             <v-card-text>
               <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  <v-text-field 
-                    v-for="(item) in annualIncomeList" :key="item.label"
-                    v-model="item.vModel"
-                    :label="item.label"
-                    type="string"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                <span v-for="(item) in annualIncomeList" :key="item.label">
+                  <v-row v-if="item.label === 'industry'" >
+                    <v-col 
+                      cols="4" md="8">
+                        <v-text-field 
+                          v-model="item.vModel"
+                          :label="item.label"
+                          type="string"
+                        ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="item.label === 'classification'" >
+                    <v-col 
+                      cols="4" md="8">
+                        <v-combobox v-if="(typeof item.vModel === 'string')"
+                          v-model="item.vModel"
+                          :label="item.label"
+                          :items="classificationList"
+                          item-text="label"
+                        ></v-combobox>
+                    </v-col>
+                  </v-row>
+                  <v-row v-else-if="item.label === 'payment_date'" >
+                    <v-col 
+                      cols="4" md="8">
+                        <v-text-field 
+                          v-model="item.vModel"
+                          :label="item.label"
+                          type="Date"
+                        ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row v-else-if="item.label === 'age' || item.label === 'total_amount' || item.label === 'deduction_amount' || item.label === 'take_home_amount'">
+                    <v-col 
+                      cols="4" md="8">
+                        <v-text-field 
+                          v-model="item.vModel"
+                          :label="item.label"
+                          type="number"
+                        ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </span>
               </v-container>
             </v-card-text>
 
@@ -159,7 +194,7 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:item.edit="{ item }">
       <v-icon
         size="small"
         class="me-2"
@@ -195,32 +230,33 @@ const isMenuOpened = ref<boolean>(false)
 const isTmpStartDateChanged = ref<boolean>(false)
 const isTmpEndDateChanged = ref<boolean>(false)
 // メニューが表示されているなら true
-const paymentDateValue = ref<string>('')
-const ageValue = ref<string>('')
+const paymentDateValue = ref<Date>(new Date())
+const ageValue = ref<number>(0)
 const industryValue = ref<string>('')
-const totalAmountValue = ref<string>('')
-const deductionAmountValue = ref<string>('')
-const takeHomeAmountValue = ref<string>('')
+const totalAmountValue = ref<number>(0)
+const deductionAmountValue = ref<number>(0)
+const takeHomeAmountValue = ref<number>(0)
 const classificationValue = ref<string>('')
+const classificationList = ref<string[]>(['給料', '賞与'])
 const dialog = ref<boolean>(false)
 const dialogDelete = ref<boolean>(false)
 const labelList = ref<string[]>(['日付', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
 const keyList = ref<string[]>(['payment_date', 'age', 'industry', 'total_amount', 'deduction_amount', 'take_home_amount', 'classification'])
 const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
+const sort = ref<boolean>(false)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<string>("1")
 
 interface AnnualIncomeItem {
   label: string
-  vModel: Ref<string | number>
+  vModel: Ref<string | number | Date>
 }
 
 interface Headers {
     title: string, 
     key: string, 
-    sortable: boolean
 }
 
 interface Item {
@@ -237,64 +273,61 @@ interface Item {
 const headers = ref<Headers[]>([
     {
         title: labelList.value[0],
-        key: keyList.value[0],
-        sortable: false
+        key: keyList.value[0]
     },
     {
         title: labelList.value[1],
-        key: keyList.value[1],
-        sortable: false
+        key: keyList.value[1]
     },
     {
         title: labelList.value[2],
-        key: keyList.value[2],
-        sortable: false
+        key: keyList.value[2]
     },
     {
         title: labelList.value[3],
-        key: keyList.value[3],
-        sortable: false
+        key: keyList.value[3]
     },
     {
         title: labelList.value[4],
-        key: keyList.value[4],
-        sortable: false
+        key: keyList.value[4]
     },
     {
         title: labelList.value[5],
-        key: keyList.value[5],
-        sortable: false
+        key: keyList.value[5]
+    },
+    {
+        title: '編集',
+        key: 'edit'
     }
 ])
 
-
 const annualIncomeList = ref<AnnualIncomeItem[]>([
   {
-    label: labelList.value[0],
+    label: keyList.value[0],
     vModel: paymentDateValue,
   },
   {
-    label: labelList.value[1],
+    label: keyList.value[1],
     vModel: ageValue,
   },
   {
-    label: labelList.value[2],
+    label: keyList.value[2],
     vModel: industryValue,
   },
   {
-    label: labelList.value[3],
+    label: keyList.value[3],
     vModel: totalAmountValue,
   },
   {
-    label: labelList.value[4],
+    label: keyList.value[4],
     vModel: deductionAmountValue,
   },
   {
-    label: labelList.value[4],
+    label: keyList.value[5],
     vModel: takeHomeAmountValue,
   },
   {
-    label: labelList.value[5],
+    label: keyList.value[6],
     vModel: classificationValue,
   },
 ])
@@ -401,9 +434,12 @@ const handleUpdateEndDatepicker = (): void => {
 const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '編集')
 
 const editItem = (item: Item): void => {
-    editedIndex.value = desserts.indexOf(item)
-    editedItem.value = Object.assign({}, item)
+    console.log("item", item)
     dialog.value = true
+    console.log(editedItem.value)
+    // editedIndex.value = desserts.indexOf(item)
+    // editedItem.value = Object.assign({}, item)
+    // dialog.value = true
 }
 
 const deleteItem = (item: Item): void => {
