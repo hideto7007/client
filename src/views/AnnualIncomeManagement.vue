@@ -110,86 +110,121 @@
             </v-btn>
           </template>
           <v-card>
+            <v-form
+              v-model="form"
+              @submit.prevent="save"
+            >
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
-
             <v-card-text>
               <v-container>
-                <span v-for="(item) in annualIncomeList" :key="item.label">
-                  <v-row v-if="item.label === '業種'" >
+                  <v-row>
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
-                          v-model="item.vModel"
-                          :label="item.label"
-                          type="string"
+                          v-model="editedItem.payment_date"
+                          :label="labelList[0]"
+                          :rules="[Validation.dateValid]"
+                          type="Date"
+                          clearable
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row v-if="item.label === '分類'" >
+                  <v-row>
                     <v-col 
                       cols="4" md="8">
-                        <v-combobox v-if="(typeof item.vModel === 'string')"
-                          v-model="item.vModel"
-                          :label="item.label"
-                          :items="classificationList"
-                          item-text="label"
+                        <v-combobox
+                          v-model="editedItem.age"
+                          :label="labelList[1]"
+                          :rules="[Validation.ageValid]"
+                          :items="ageList"
+                          type="number"
+                          clearable
                         ></v-combobox>
                     </v-col>
                   </v-row>
-                  <v-row v-else-if="item.label === '支給日'" >
+                  <v-row>
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
-                          v-model="item.vModel"
-                          :label="item.label"
-                          type="Date"
+                          v-model="editedItem.industry"
+                          :label="labelList[2]"
+                          :rules="[Validation.industryValid]"
+                          type="string"
+                          clearable
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row v-else-if="item.label === '年齢' || item.label === '総支給' || item.label === '差引額'">
+                  <v-row>
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
-                          v-model="item.vModel"
-                          :label="item.label"
+                          v-model="editedItem.total_amount"
+                          :label="labelList[3]"
+                          :rules="[Validation.incomeAmountValid]"
                           type="number"
+                          clearable
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row v-else-if="item.label === '手取り'">
+                  <v-row>
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
-                          v-model="item.vModel"
-                          :label="item.label"
+                          v-model="editedItem.deduction_amount"
+                          :label="labelList[4]"
+                          :rules="[Validation.incomeAmountValid]"
+                          type="number"
+                          clearable
+                        ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col 
+                      cols="4" md="8">
+                        <v-text-field 
+                          v-model="editedItem.take_home_amount"
+                          :label="labelList[5]"
                           type="number"
                           readonly
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                </span>
+                  <v-row>
+                    <v-col 
+                      cols="4" md="8">
+                        <v-combobox
+                          v-model="editedItem.classification"
+                          :label="labelList[6]"
+                          :items="classificationList"
+                          item-text="label"
+                          :rules="[Validation.classificationValid]"
+                          clearable
+                        ></v-combobox>
+                    </v-col>
+                  </v-row>
               </v-container>
             </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="close"
-              >
-                キャンセル
-              </v-btn>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="save"
-              >
-                登録
-              </v-btn>
-            </v-card-actions>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="blue-darken-1"
+                  variant="text"
+                  @click="close"
+                >
+                  キャンセル
+                </v-btn>
+                <v-btn
+                  :disabled="!form"
+                  color="blue-darken-1"
+                  variant="text"
+                >
+                  登録
+                </v-btn>
+              </v-card-actions>
+            </v-form>
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
@@ -224,8 +259,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, Ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
+import Validation from "../common/vaildation"
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -241,29 +277,19 @@ const isMenuOpened = ref<boolean>(false)
 const isTmpStartDateChanged = ref<boolean>(false)
 const isTmpEndDateChanged = ref<boolean>(false)
 // メニューが表示されているなら true
-const paymentDateValue = ref<Date>(new Date())
-const ageValue = ref<number>(0)
-const industryValue = ref<string>('')
-const totalAmountValue = ref<number>(0)
-const deductionAmountValue = ref<number>(0)
-const takeHomeAmountValue = ref<number>(totalAmountValue.value - deductionAmountValue.value)
-const classificationValue = ref<string>('')
-const classificationList = ref<string[]>(['給料', '賞与'])
+const classificationList = ref<string[]>(['給料', '賞与', '一時金', '寸志', 'その他'])
 const dialog = ref<boolean>(false)
 const dialogDelete = ref<boolean>(false)
+const ageList = ref<number[]>([...Array(86).keys()].map(i => i + 15))
 const labelList = ref<string[]>(['支給日', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
 const keyList = ref<string[]>(['payment_date', 'age', 'industry', 'total_amount', 'deduction_amount', 'take_home_amount', 'classification'])
 const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
 const sort = ref<boolean>(false)
+const form = ref<boolean>(false)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<string>("1")
-
-interface AnnualIncomeItem {
-  label: string
-  vModel: Ref<string | number | Date>
-}
 
 interface Headers {
     title: string, 
@@ -312,37 +338,6 @@ const headers = ref<Headers[]>([
         title: '編集',
         key: 'edit'
     }
-])
-
-const annualIncomeList = ref<AnnualIncomeItem[]>([
-  {
-    label: labelList.value[0],
-    vModel: paymentDateValue,
-  },
-  {
-    label: labelList.value[1],
-    vModel: ageValue,
-  },
-  {
-    label: labelList.value[2],
-    vModel: industryValue,
-  },
-  {
-    label: labelList.value[3],
-    vModel: totalAmountValue,
-  },
-  {
-    label: labelList.value[4],
-    vModel: deductionAmountValue,
-  },
-  {
-    label: labelList.value[5],
-    vModel: takeHomeAmountValue,
-  },
-  {
-    label: labelList.value[6],
-    vModel: classificationValue,
-  },
 ])
 
 const editedItem = ref<Item>({
@@ -451,14 +446,10 @@ const handleUpdateEndDatepicker = (): void => {
 const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '編集')
 
 const editItem = (item: Item): void => {
-    console.log("item", item)
     editedIndex.value = desserts.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
     console.log(editedItem.value)
     dialog.value = true
-    // editedIndex.value = desserts.indexOf(item)
-    // editedItem.value = Object.assign({}, item)
-    // dialog.value = true
 }
 
 const deleteItem = (item: Item): void => {
@@ -490,13 +481,16 @@ const closeDelete = () => {
 }
 
 const save = () => {
+  console.log(form.value)
   if (editedIndex.value > -1) {
     Object.assign(desserts.value[editedIndex.value], editedItem.value);
+    console.log("edit", desserts.value)
   } else {
     desserts.value.push(editedItem.value);
+    console.log("new", desserts.value)
   }
   close();
-};
+}
 
 
 const getRangeDateFetchData = async(): Promise<void> => {
