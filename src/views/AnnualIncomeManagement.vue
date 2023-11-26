@@ -318,7 +318,25 @@ interface Item {
     'take_home_amount': number,
     'classification': string,
     'user_id': number
+}
 
+interface updateItem {
+  'income_forecast_id': string,
+  'payment_date': string,
+  'age': number,
+  'industry': string,
+  'total_amount': number,
+  'deduction_amount': number,
+  'take_home_amount': number,
+  'classification': string,
+}
+
+interface IncomeData {
+  income_forecast_id: string;
+}
+
+interface ApiResponse {
+  data: IncomeData[] | Item[] | updateItem[];
 }
 
 const headers = ref<Headers[]>([
@@ -462,20 +480,29 @@ const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '�
 const modeTitle = computed(() => modeFlag.value === true ? 'on' : 'off')
 
 const editItem = (item: Item): void => {
-    editedIndex.value = desserts.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
-    dialog.value = true
+  editedIndex.value = desserts.value.indexOf(item)
+  editedItem.value = Object.assign({}, item)
+  dialog.value = true
 }
 
 const deleteItem = (item: Item): void => {
     editedIndex.value = desserts.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
     dialogDelete.value = true
 }
 
 const deleteItemConfirm = (): void => {
-    desserts.value.splice(editedIndex.value, 1)
-    closeDelete()
+  const deleteId = desserts.value[editedIndex.value].income_forecast_id
+  const res: ApiResponse[] = [
+    {
+      data: [
+        {
+          'income_forecast_id': deleteId
+        }
+      ]
+    }
+  ]
+  console.log(res)
+  closeDelete()
 }
 
 const close = (): void  => {
@@ -497,12 +524,16 @@ const closeDelete = (): void  => {
 
 const save = (): void  => {
   loading.value = true
+  const res: ApiResponse[] = [ { data: [] } ]
   if (editedIndex.value > -1) {
     console.log("edit", editedItem.value)
+    res[0].data.push(editedItem.value)
+    console.log("edit", res)
   } else {
     editedItem.value['income_forecast_id'] = uuidv4()
     editedItem.value['user_id'] = userId.value
-    console.log("new", editedItem.value)
+    res[0].data.push(editedItem.value)
+    console.log("new", res)
   }
   loading.value = false
   close();
@@ -513,68 +544,68 @@ const computedItem = computed(() => editedItem.value)
 const takeHomeAmountRsult = computed(() => editedItem.value.take_home_amount = computedItem.value.total_amount - computedItem.value.deduction_amount)
 
 const getRangeDateFetchData = async(): Promise<void> => {
-    const queryList: string[] = []
-    queryList.push("user_id=" + userId.value)
-    const fullPrames: string = "?" + queryList.join('&')
-    try {
-      const response = await ApiEndpoint.getRangeDate(fullPrames)
-      const data = response.data // レスポンスからデータを取得
+  const queryList: string[] = []
+  queryList.push("user_id=" + userId.value)
+  const fullPrames: string = "?" + queryList.join('&')
+  try {
+    const response = await ApiEndpoint.getRangeDate(fullPrames)
+    const data = response.data // レスポンスからデータを取得
 
-      startDate.value = data.result[0].StratPaymaentDate
-      endDate.value = data.result[0].EndPaymaentDate
+    startDate.value = data.result[0].StratPaymaentDate
+    endDate.value = data.result[0].EndPaymaentDate
 
-      tmpStartDate.value = startDate.value
-      tmpEndDate.value = endDate.value
+    tmpStartDate.value = startDate.value
+    tmpEndDate.value = endDate.value
 
-      screenFlag.value = true
+    screenFlag.value = true
 
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
 }
 
 
 const getIncomeDataFetchData = async(): Promise<void> => {
-    const queryList: string[] = []
-    queryList.push("start_date=" + startDate.value)
-    queryList.push("end_date=" + endDate.value)
-    queryList.push("user_id=" + userId.value)
-    const fullPrames: string = "?" + queryList.join('&')
-    try {
-      const response = await ApiEndpoint.getIncomeData(fullPrames)
-      const dataList = response.data.result // レスポンスからデータを取得
+  const queryList: string[] = []
+  queryList.push("start_date=" + startDate.value)
+  queryList.push("end_date=" + endDate.value)
+  queryList.push("user_id=" + userId.value)
+  const fullPrames: string = "?" + queryList.join('&')
+  try {
+    const response = await ApiEndpoint.getIncomeData(fullPrames)
+    const dataList = response.data.result // レスポンスからデータを取得
 
-      for (const data of dataList) {
-        desserts.value.push({
-            income_forecast_id: data.IncomeForecastID,
-            payment_date: data.PaymentDate.slice(0, 10),
-            age: data.Age,
-            industry: data.Industry,
-            total_amount: data.TotalAmount,
-            deduction_amount: data.DeductionAmount,
-            take_home_amount: data.TakeHomeAmount,
-            classification: data.Classification,
-            user_id: data.UserID
-        })
-      }
-
-    } catch (error) {
-      console.error('Error fetching data:', error)
+    for (const data of dataList) {
+      desserts.value.push({
+          income_forecast_id: data.IncomeForecastID,
+          payment_date: data.PaymentDate.slice(0, 10),
+          age: data.Age,
+          industry: data.Industry,
+          total_amount: data.TotalAmount,
+          deduction_amount: data.DeductionAmount,
+          take_home_amount: data.TakeHomeAmount,
+          classification: data.Classification,
+          user_id: data.UserID
+      })
     }
+
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
 }
 
 // ページ読み込み
 onMounted(async () => {
-    await getRangeDateFetchData()
-    getIncomeDataFetchData()
+  await getRangeDateFetchData()
+  getIncomeDataFetchData()
 })
 
 watch(dialog, (val: boolean): void => {
-    val || close()
+  val || close()
 })
 
 watch(dialogDelete, (val: boolean): void => {
-    val || closeDelete()
+  val || closeDelete()
 })
 
 
