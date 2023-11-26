@@ -74,7 +74,7 @@
       </v-menu>
     </div>
     <v-data-table
-      :headers="headers"
+      :headers="headersList"
       :items="desserts"
       :sort-by="[
       { key: keyList[0], order: sort },
@@ -108,6 +108,12 @@
             >
               新規登録
             </v-btn>
+            <v-col md="1" style="height: 89px;">
+              <v-checkbox 
+                v-model="modeFlag"
+                :label="modeTitle">
+              </v-checkbox>
+          </v-col>
           </template>
           <v-card>
             <v-form
@@ -218,6 +224,7 @@
                 </v-btn>
                 <v-btn
                   :disabled="!form"
+                  :loading="loading"
                   color="blue-darken-1"
                   variant="text"
                   @click="save"
@@ -288,6 +295,8 @@ const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
 const sort = ref<boolean>(false)
 const form = ref<boolean>(false)
+const loading = ref<boolean>(false)
+const modeFlag = ref<boolean>(false)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<string>("1")
@@ -340,6 +349,8 @@ const headers = ref<Headers[]>([
         key: 'edit'
     }
 ])
+
+const headersList = computed(() => modeFlag.value === true ? headers.value : headers.value.slice(0, 6)) 
 
 const editedItem = ref<Item>({
     income_forecast_id: '',
@@ -446,6 +457,8 @@ const handleUpdateEndDatepicker = (): void => {
 
 const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '編集')
 
+const modeTitle = computed(() => modeFlag.value === true ? 'on' : 'off')
+
 const editItem = (item: Item): void => {
     editedIndex.value = desserts.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
@@ -482,6 +495,7 @@ const closeDelete = () => {
 }
 
 const save = () => {
+  loading.value = true
   console.log(form.value)
   if (editedIndex.value > -1) {
     Object.assign(desserts.value[editedIndex.value], editedItem.value);
@@ -490,6 +504,7 @@ const save = () => {
     desserts.value.push(editedItem.value);
     console.log("new", desserts.value)
   }
+  loading.value = false
   close();
 }
 
