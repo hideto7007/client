@@ -3,9 +3,8 @@ class Validation {
     dateValid(value: Date): string | boolean {
         if (!value) {
             return '必須入力項目です'
-        } else {
-            return true
         }
+        return true
             
     }
     ageValid(value: string): string | boolean {
@@ -46,8 +45,14 @@ class Validation {
             return 'リストの中からお選びください'
         } else {
             return true
-        }
-            
+        }   
+    }
+    takeHomeAmountValid(value: string): string | boolean {
+        const num = Number(value)
+        if (num < 0) {
+            return '総支給と差引額が逆転してます。'
+        } 
+        return true
     }
 
 }

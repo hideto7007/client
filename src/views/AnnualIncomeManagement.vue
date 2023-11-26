@@ -189,6 +189,7 @@
                   <v-row>
                     <v-col 
                       cols="4" md="8">
+                      <!-- :rules="[Validation.takeHomeAmountValid]" -->
                         <v-text-field 
                           v-model="editedItem.take_home_amount"
                           :label="labelList[5]"
@@ -235,13 +236,13 @@
             </v-form>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="200px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5">削除しますか？</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+                <v-btn color="blue-darken-1" variant="text" @click="closeDelete">キャンセル</v-btn>
+                <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">削除</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -272,6 +273,7 @@ import ApiEndpoint from "../common/apiEndpoint"
 import Validation from "../common/vaildation"
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { v4 as uuidv4 } from 'uuid'
 
 
 const startDate = ref<Date>()
@@ -299,7 +301,7 @@ const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
-const userId = ref<string>("1")
+const userId = ref<number>(1)
 
 interface Headers {
     title: string, 
@@ -355,7 +357,7 @@ const headersList = computed(() => modeFlag.value === true ? headers.value : hea
 const editedItem = ref<Item>({
     income_forecast_id: '',
     payment_date: '',
-    age: 0,
+    age: 18,
     industry: '',
     total_amount: 0,
     deduction_amount: 0,
@@ -367,7 +369,7 @@ const editedItem = ref<Item>({
 const defaultItem = ref<Item>({
     income_forecast_id: '',
     payment_date: '',
-    age: 0,
+    age: 18,
     industry: '',
     total_amount: 0,
     deduction_amount: 0,
@@ -462,7 +464,6 @@ const modeTitle = computed(() => modeFlag.value === true ? 'on' : 'off')
 const editItem = (item: Item): void => {
     editedIndex.value = desserts.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
-    console.log(editedItem.value)
     dialog.value = true
 }
 
@@ -477,7 +478,7 @@ const deleteItemConfirm = (): void => {
     closeDelete()
 }
 
-const close = () => {
+const close = (): void  => {
   dialog.value = false
   nextTick(() => {
     editedItem.value = Object.assign({}, defaultItem.value)
@@ -486,23 +487,22 @@ const close = () => {
 }
 
 
-const closeDelete = () => {
-  dialog.value = false
+const closeDelete = (): void  => {
+  dialogDelete.value = false
   nextTick(() => {
     editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1
   })
 }
 
-const save = () => {
+const save = (): void  => {
   loading.value = true
-  console.log(form.value)
   if (editedIndex.value > -1) {
-    Object.assign(desserts.value[editedIndex.value], editedItem.value);
-    console.log("edit", desserts.value)
+    console.log("edit", editedItem.value)
   } else {
-    desserts.value.push(editedItem.value);
-    console.log("new", desserts.value)
+    editedItem.value['income_forecast_id'] = uuidv4()
+    editedItem.value['user_id'] = userId.value
+    console.log("new", editedItem.value)
   }
   loading.value = false
   close();
@@ -570,9 +570,21 @@ watch(dialog, (val: boolean): void => {
     val || close()
 })
 
-watch(dialogDelete, (val: boolean) : void => {
+watch(dialogDelete, (val: boolean): void => {
     val || closeDelete()
 })
+
+const computedItem = computed(() => editedItem.value)
+
+
+watch(computedItem.value, (newVal: Item, oldVal: Item): void => {
+  console.log(newVal.total_amount, oldVal.total_amount)
+
+  if (oldVal.total_amount || oldVal.deduction_amount) {
+    oldVal.take_home_amount = oldVal.total_amount - oldVal.deduction_amount
+    console.log(oldVal.take_home_amount)
+  }
+}, { deep: true })
 
 </script>
 
