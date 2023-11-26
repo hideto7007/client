@@ -189,10 +189,10 @@
                   <v-row>
                     <v-col 
                       cols="4" md="8">
-                      <!-- :rules="[Validation.takeHomeAmountValid]" -->
                         <v-text-field 
-                          v-model="editedItem.take_home_amount"
+                          v-model="takeHomeAmountRsult"
                           :label="labelList[5]"
+                          :rules="[Validation.takeHomeAmountValid]"
                           type="number"
                           readonly
                         ></v-text-field>
@@ -508,6 +508,9 @@ const save = (): void  => {
   close();
 }
 
+const computedItem = computed(() => editedItem.value)
+// 総支給額 - 差引額の結果
+const takeHomeAmountRsult = computed(() => editedItem.value.take_home_amount = computedItem.value.total_amount - computedItem.value.deduction_amount)
 
 const getRangeDateFetchData = async(): Promise<void> => {
     const queryList: string[] = []
@@ -574,17 +577,6 @@ watch(dialogDelete, (val: boolean): void => {
     val || closeDelete()
 })
 
-const computedItem = computed(() => editedItem.value)
-
-
-watch(computedItem.value, (newVal: Item, oldVal: Item): void => {
-  console.log(newVal.total_amount, oldVal.total_amount)
-
-  if (oldVal.total_amount || oldVal.deduction_amount) {
-    oldVal.take_home_amount = oldVal.total_amount - oldVal.deduction_amount
-    console.log(oldVal.take_home_amount)
-  }
-}, { deep: true })
 
 </script>
 
