@@ -220,6 +220,7 @@
                   :disabled="!form"
                   color="blue-darken-1"
                   variant="text"
+                  @click="save"
                 >
                   登録
                 </v-btn>
