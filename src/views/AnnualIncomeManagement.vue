@@ -117,7 +117,7 @@
             <v-card-text>
               <v-container>
                 <span v-for="(item) in annualIncomeList" :key="item.label">
-                  <v-row v-if="item.label === 'industry'" >
+                  <v-row v-if="item.label === '業種'" >
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
@@ -127,7 +127,7 @@
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row v-if="item.label === 'classification'" >
+                  <v-row v-if="item.label === '分類'" >
                     <v-col 
                       cols="4" md="8">
                         <v-combobox v-if="(typeof item.vModel === 'string')"
@@ -138,7 +138,7 @@
                         ></v-combobox>
                     </v-col>
                   </v-row>
-                  <v-row v-else-if="item.label === 'payment_date'" >
+                  <v-row v-else-if="item.label === '支給日'" >
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
@@ -148,13 +148,24 @@
                         ></v-text-field>
                     </v-col>
                   </v-row>
-                  <v-row v-else-if="item.label === 'age' || item.label === 'total_amount' || item.label === 'deduction_amount' || item.label === 'take_home_amount'">
+                  <v-row v-else-if="item.label === '年齢' || item.label === '総支給' || item.label === '差引額'">
                     <v-col 
                       cols="4" md="8">
                         <v-text-field 
                           v-model="item.vModel"
                           :label="item.label"
                           type="number"
+                        ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row v-else-if="item.label === '手取り'">
+                    <v-col 
+                      cols="4" md="8">
+                        <v-text-field 
+                          v-model="item.vModel"
+                          :label="item.label"
+                          type="number"
+                          readonly
                         ></v-text-field>
                     </v-col>
                   </v-row>
@@ -235,12 +246,12 @@ const ageValue = ref<number>(0)
 const industryValue = ref<string>('')
 const totalAmountValue = ref<number>(0)
 const deductionAmountValue = ref<number>(0)
-const takeHomeAmountValue = ref<number>(0)
+const takeHomeAmountValue = ref<number>(totalAmountValue.value - deductionAmountValue.value)
 const classificationValue = ref<string>('')
 const classificationList = ref<string[]>(['給料', '賞与'])
 const dialog = ref<boolean>(false)
 const dialogDelete = ref<boolean>(false)
-const labelList = ref<string[]>(['日付', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
+const labelList = ref<string[]>(['支給日', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
 const keyList = ref<string[]>(['payment_date', 'age', 'industry', 'total_amount', 'deduction_amount', 'take_home_amount', 'classification'])
 const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
@@ -260,6 +271,7 @@ interface Headers {
 }
 
 interface Item {
+    'income_forecast_id': string,
     'payment_date': string,
     'age': number,
     'industry': string,
@@ -267,6 +279,7 @@ interface Item {
     'deduction_amount': number,
     'take_home_amount': number,
     'classification': string,
+    'user_id': number
 
 }
 
@@ -303,36 +316,37 @@ const headers = ref<Headers[]>([
 
 const annualIncomeList = ref<AnnualIncomeItem[]>([
   {
-    label: keyList.value[0],
+    label: labelList.value[0],
     vModel: paymentDateValue,
   },
   {
-    label: keyList.value[1],
+    label: labelList.value[1],
     vModel: ageValue,
   },
   {
-    label: keyList.value[2],
+    label: labelList.value[2],
     vModel: industryValue,
   },
   {
-    label: keyList.value[3],
+    label: labelList.value[3],
     vModel: totalAmountValue,
   },
   {
-    label: keyList.value[4],
+    label: labelList.value[4],
     vModel: deductionAmountValue,
   },
   {
-    label: keyList.value[5],
+    label: labelList.value[5],
     vModel: takeHomeAmountValue,
   },
   {
-    label: keyList.value[6],
+    label: labelList.value[6],
     vModel: classificationValue,
   },
 ])
 
 const editedItem = ref<Item>({
+    income_forecast_id: '',
     payment_date: '',
     age: 0,
     industry: '',
@@ -340,9 +354,11 @@ const editedItem = ref<Item>({
     deduction_amount: 0,
     take_home_amount: 0,
     classification: '',
+    user_id: 0
 })
 
 const defaultItem = ref<Item>({
+    income_forecast_id: '',
     payment_date: '',
     age: 0,
     industry: '',
@@ -350,6 +366,7 @@ const defaultItem = ref<Item>({
     deduction_amount: 0,
     take_home_amount: 0,
     classification: '',
+    user_id: 0
 })
 
 // メニューを閉じる。合わせて各状態を初期値に戻す
@@ -435,28 +452,30 @@ const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '�
 
 const editItem = (item: Item): void => {
     console.log("item", item)
-    dialog.value = true
+    editedIndex.value = desserts.value.indexOf(item)
+    editedItem.value = Object.assign({}, item)
     console.log(editedItem.value)
+    dialog.value = true
     // editedIndex.value = desserts.indexOf(item)
     // editedItem.value = Object.assign({}, item)
     // dialog.value = true
 }
 
 const deleteItem = (item: Item): void => {
-    editedIndex.value = desserts.indexOf(item)
+    editedIndex.value = desserts.value.indexOf(item)
     editedItem.value = Object.assign({}, item)
     dialogDelete.value = true
 }
 
 const deleteItemConfirm = (): void => {
-    desserts.splice(editedIndex.value, 1)
+    desserts.value.splice(editedIndex.value, 1)
     closeDelete()
 }
 
 const close = () => {
   dialog.value = false
   nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem())
+    editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1
   })
 }
@@ -465,7 +484,7 @@ const close = () => {
 const closeDelete = () => {
   dialog.value = false
   nextTick(() => {
-    editedItem.value = Object.assign({}, defaultItem())
+    editedItem.value = Object.assign({}, defaultItem.value)
     editedIndex.value = -1
   })
 }
@@ -514,13 +533,15 @@ const getIncomeDataFetchData = async(): Promise<void> => {
 
       for (const data of dataList) {
         desserts.value.push({
+            income_forecast_id: data.IncomeForecastID,
             payment_date: data.PaymentDate.slice(0, 10),
             age: data.Age,
             industry: data.Industry,
             total_amount: data.TotalAmount,
             deduction_amount: data.DeductionAmount,
             take_home_amount: data.TakeHomeAmount,
-            classification: data.Classification
+            classification: data.Classification,
+            user_id: data.UserID
         })
       }
 
