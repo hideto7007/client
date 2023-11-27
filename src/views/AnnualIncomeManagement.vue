@@ -1,4 +1,5 @@
 <template>
+  <div v-if="!serverErrorFlag">
     <div v-if="screenFlag && startDate !== undefined && endDate !== undefined && tmpStartDate !== undefined && tmpEndDate !== undefined">
       <v-menu
         v-model="isMenuOpened"
@@ -73,204 +74,211 @@
         </v-card>
       </v-menu>
     </div>
-    <v-data-table
-      :headers="headersList"
-      :items="desserts"
-      :sort-by="[
-      { key: keyList[0], order: sort },
-      { key: keyList[1], order: sort },
-      { key: keyList[2], order: sort },
-      { key: keyList[3], order: sort },
-      { key: keyList[4], order: sort },
-      { key: keyList[5], order: sort }]"
-    >
-    <template v-slot:top>
-      <v-toolbar
-        flat
+      <v-data-table
+        :headers="headersList"
+        :items="desserts"
+        :sort-by="[
+        { key: keyList[0], order: sort },
+        { key: keyList[1], order: sort },
+        { key: keyList[2], order: sort },
+        { key: keyList[3], order: sort },
+        { key: keyList[4], order: sort },
+        { key: keyList[5], order: sort }]"
       >
-        <v-toolbar-title>年収管理表</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
+      <template v-slot:top>
+        <v-toolbar
+          flat
         >
-          <template v-slot:activator="{ props }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="props"
-            >
-              新規登録
-            </v-btn>
-            <v-col md="1" style="height: 89px;">
-              <v-checkbox 
-                v-model="modeFlag"
-                :label="modeTitle">
-              </v-checkbox>
-          </v-col>
-          </template>
-          <v-card>
-            <v-form
-              v-model="form"
-              @submit.prevent="save"
-            >
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-text-field 
-                          v-model="editedItem.payment_date"
-                          :label="labelList[0]"
-                          :rules="[Validation.dateValid]"
-                          type="Date"
-                          clearable
-                        ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-combobox
-                          v-model="editedItem.age"
-                          :label="labelList[1]"
-                          :rules="[Validation.ageValid]"
-                          :items="ageList"
-                          type="number"
-                          clearable
-                        ></v-combobox>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-text-field 
-                          v-model="editedItem.industry"
-                          :label="labelList[2]"
-                          :rules="[Validation.industryValid]"
-                          type="string"
-                          clearable
-                        ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-text-field 
-                          v-model="editedItem.total_amount"
-                          :label="labelList[3]"
-                          :rules="[Validation.incomeAmountValid]"
-                          type="number"
-                          clearable
-                        ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-text-field 
-                          v-model="editedItem.deduction_amount"
-                          :label="labelList[4]"
-                          :rules="[Validation.incomeAmountValid]"
-                          type="number"
-                          clearable
-                        ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-text-field 
-                          v-model="takeHomeAmountRsult"
-                          :label="labelList[5]"
-                          :rules="[Validation.takeHomeAmountValid]"
-                          type="number"
-                          readonly
-                        ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col 
-                      cols="4" md="8">
-                        <v-combobox
-                          v-model="editedItem.classification"
-                          :label="labelList[6]"
-                          :items="classificationList"
-                          item-text="label"
-                          :rules="[Validation.classificationValid]"
-                          clearable
-                        ></v-combobox>
-                    </v-col>
-                  </v-row>
-              </v-container>
-            </v-card-text>
+          <v-toolbar-title>年収管理表</v-toolbar-title>
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          ></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog
+            v-model="dialog"
+            max-width="500px"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                color="primary"
+                dark
+                class="mb-2"
+                v-bind="props"
+              >
+                新規登録
+              </v-btn>
+              <v-col md="1" style="height: 89px;">
+                <v-checkbox 
+                  v-model="modeFlag"
+                  :label="modeTitle">
+                </v-checkbox>
+            </v-col>
+            </template>
+            <v-card>
+              <v-form
+                v-model="form"
+                @submit.prevent="save"
+              >
+              <v-card-title>
+                <span class="text-h5">{{ formTitle }}</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-text-field 
+                            v-model="editedItem.payment_date"
+                            :label="labelList[0]"
+                            :rules="[Validation.dateValid]"
+                            type="Date"
+                            clearable
+                          ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-combobox
+                            v-model="editedItem.age"
+                            :label="labelList[1]"
+                            :rules="[Validation.ageValid]"
+                            :items="ageList"
+                            type="number"
+                            clearable
+                          ></v-combobox>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-text-field 
+                            v-model="editedItem.industry"
+                            :label="labelList[2]"
+                            :rules="[Validation.industryValid]"
+                            type="string"
+                            clearable
+                          ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-text-field 
+                            v-model="editedItem.total_amount"
+                            :label="labelList[3]"
+                            :rules="[Validation.incomeAmountValid]"
+                            type="number"
+                            clearable
+                          ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-text-field 
+                            v-model="editedItem.deduction_amount"
+                            :label="labelList[4]"
+                            :rules="[Validation.incomeAmountValid]"
+                            type="number"
+                            clearable
+                          ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-text-field 
+                            v-model="takeHomeAmountRsult"
+                            :label="labelList[5]"
+                            :rules="[Validation.takeHomeAmountValid]"
+                            type="number"
+                            readonly
+                          ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col 
+                        cols="4" md="8">
+                          <v-combobox
+                            v-model="editedItem.classification"
+                            :label="labelList[6]"
+                            :items="classificationList"
+                            item-text="label"
+                            :rules="[Validation.classificationValid]"
+                            clearable
+                          ></v-combobox>
+                      </v-col>
+                    </v-row>
+                </v-container>
+              </v-card-text>
 
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue-darken-1"
+                    variant="text"
+                    @click="close"
+                  >
+                    キャンセル
+                  </v-btn>
+                  <v-btn
+                    :disabled="!form"
+                    :loading="loading"
+                    color="blue-darken-1"
+                    variant="text"
+                    @click="save"
+                  >
+                    登録
+                  </v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogDelete" max-width="200px">
+            <v-card>
+              <v-card-title class="text-h5">削除しますか？</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  color="blue-darken-1"
-                  variant="text"
-                  @click="close"
-                >
-                  キャンセル
-                </v-btn>
-                <v-btn
-                  :disabled="!form"
-                  :loading="loading"
-                  color="blue-darken-1"
-                  variant="text"
-                  @click="save"
-                >
-                  登録
-                </v-btn>
+                  <v-btn color="blue-darken-1" variant="text" @click="closeDelete">キャンセル</v-btn>
+                  <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">削除</v-btn>
+                <v-spacer></v-spacer>
               </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="200px">
-          <v-card>
-            <v-card-title class="text-h5">削除しますか？</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-                <v-btn color="blue-darken-1" variant="text" @click="closeDelete">キャンセル</v-btn>
-                <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">削除</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.edit="{ item }">
-      <v-icon
-        size="small"
-        class="me-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        size="small"
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.edit="{ item }">
+        <v-icon
+          size="small"
+          class="me-2"
+          @click="editItem(item)"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon
+          size="small"
+          @click="deleteItem(item)"
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+  </div>
+  <div v-else>
+    <Alert
+      :title="serverErrorTitle"
+      :text="serverErrorText"/>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
 import Validation from "../common/vaildation"
+import Alert from "../common/alert.vue"
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { v4 as uuidv4 } from 'uuid'
@@ -299,6 +307,9 @@ const sort = ref<boolean>(false)
 const form = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
+const serverErrorFlag = ref<boolean>(false)
+const serverErrorTitle = ref<string>('サーバーエラー 500エラー')
+const serverErrorText = ref<string>('サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。')
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<number>(1)
@@ -560,6 +571,7 @@ const getRangeDateFetchData = async(): Promise<void> => {
     screenFlag.value = true
 
   } catch (error) {
+    serverErrorFlag.value = true
     console.error('Error fetching data:', error)
   }
 }
@@ -590,6 +602,7 @@ const getIncomeDataFetchData = async(): Promise<void> => {
     }
 
   } catch (error) {
+    serverErrorFlag.value = true
     console.error('Error fetching data:', error)
   }
 }

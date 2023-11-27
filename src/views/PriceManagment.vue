@@ -1,48 +1,56 @@
 <template>
-  <div class="price-title">
-    <h1>月と年間の貯金額算出</h1>
-  </div>
-  <div>
-    <v-text-field 
-      v-for="(item) in priceList" :key="item.label"
-      v-model="item.vModel"
-      :label="item.label"
-      type="number"
-    ></v-text-field>
+  <div v-if="!serverErrorFlag">
+    <div class="price-title">
+      <h1>月と年間の貯金額算出</h1>
+    </div>
+    <div>
+      <v-text-field 
+        v-for="(item) in priceList" :key="item.label"
+        v-model="item.vModel"
+        :label="item.label"
+        type="number"
+      ></v-text-field>
 
-    <v-btn
-      class="me-4"
-      type="submit"
-      color="success"
-      @click="handleSubmit"
+      <v-btn
+        class="me-4"
+        type="submit"
+        color="success"
+        @click="handleSubmit"
+      >
+        計算
+      </v-btn>
+
+      <v-btn 
+        @click="handleReset"
+        color="blue-grey">
+        クリア
+      </v-btn>
+    </div>
+    <v-card
+      class="mx-auto"
+      max-width="500"
     >
-      計算
-    </v-btn>
-
-    <v-btn 
-      @click="handleReset"
-      color="blue-grey">
-      クリア
-    </v-btn>
+      <v-card-text class="card-style">
+        <p class="text-h4 text--primary">
+          月の貯蓄額 {{ leftAmountValue }} 円
+        </p><v-card-actions />
+        <p class="text-h4 text--primary">
+          年の貯蓄額 {{ totalAmountValue }} 円
+        </p>
+      </v-card-text>
+    </v-card>
   </div>
-  <v-card
-    class="mx-auto"
-    max-width="500"
-  >
-    <v-card-text class="card-style">
-      <p class="text-h4 text--primary">
-        月の貯蓄額 {{ leftAmountValue }} 円
-      </p><v-card-actions />
-      <p class="text-h4 text--primary">
-        年の貯蓄額 {{ totalAmountValue }} 円
-      </p>
-    </v-card-text>
-  </v-card>
+  <div v-else>
+    <Alert
+      :title="serverErrorTitle"
+      :text="serverErrorText"/>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, Ref, onMounted } from 'vue'
-import ApiEndpoint from "../common/apiEndpoint";
+import ApiEndpoint from "../common/apiEndpoint"
+import Alert from "../common/alert.vue"
 
 // TBD : 任意保険等のフォーム項目も追加する
 
@@ -57,6 +65,9 @@ const privateValue = ref<number>(0)
 const insuranceValue = ref<number>(0)
 const leftAmountValue = ref<number>(0)
 const totalAmountValue = ref<number>(0)
+const serverErrorFlag = ref<boolean>(false)
+const serverErrorTitle = ref<string>('サーバーエラー 500エラー')
+const serverErrorText = ref<string>('サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。')
 
 type priceData = {
   moneyReceived: number, 
@@ -168,6 +179,7 @@ const getPriceManagementFetchData = async (): Promise<void> => {
       leftAmountValue.value = amountDataResult.leftAmount
       totalAmountValue.value = amountDataResult.totalAmount
     } catch (error) {
+      serverErrorFlag.value = true
       console.error('Error fetching data:', error)
     }
 }
