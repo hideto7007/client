@@ -56,7 +56,6 @@ class Validation {
     }
 
 }
-// value.search(/[.*]/g)
   
   export default new Validation();
   
