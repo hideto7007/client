@@ -501,8 +501,8 @@ const editItem = (item: Item): void => {
 }
 
 const deleteItem = (item: Item): void => {
-    editedIndex.value = desserts.value.indexOf(item)
-    dialogDelete.value = true
+  editedIndex.value = desserts.value.indexOf(item)
+  dialogDelete.value = true
 }
 
 const deleteItemConfirm = async(): Promise<void> => {
@@ -608,7 +608,6 @@ const getRangeDateFetchData = async(): Promise<void> => {
   }
 }
 
-
 const getIncomeDataFetchData = async(startDate: string, endDate: string): Promise<void> => {
   const queryList: string[] = []
   // 表示データの初期化
@@ -654,7 +653,6 @@ watch(dialog, (val: boolean): void => {
 watch(dialogDelete, (val: boolean): void => {
   val || closeDelete()
 })
-
 
 </script>
 
