@@ -28,13 +28,13 @@
     </div>
     <v-card
       class="mx-auto"
-      max-width="500"
+      max-width="370"
     >
       <v-card-text class="card-style">
-        <p class="text-h4 text--primary">
+        <p class="text-h5 text--primary">
           月の貯蓄額 {{ leftAmountValue }} 円
         </p><v-card-actions />
-        <p class="text-h4 text--primary">
+        <p class="text-h5 text--primary">
           年の貯蓄額 {{ totalAmountValue }} 円
         </p>
       </v-card-text>
