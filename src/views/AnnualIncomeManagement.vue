@@ -269,8 +269,10 @@
   </div>
   <div v-else>
     <Alert
+      :color="alertColor"
       :title="serverErrorTitle"
-      :text="serverErrorText"/>
+      :text="serverErrorText"
+    />
   </div>
 </template>
 
@@ -307,6 +309,7 @@ const sort = ref<boolean>(false)
 const form = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
+const alertColor= ref<string>('error')
 const serverErrorFlag = ref<boolean>(false)
 const serverErrorTitle = ref<string>('サーバーエラー 500エラー')
 const serverErrorText = ref<string>('サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。')
@@ -418,9 +421,10 @@ const closeMenu = (): void => {
 }
 
 // 仮状態の期間を反映する
-const updatePeriods = (): void => {
+const updatePeriods = async(): Promise<void> => {
   startDate.value = tmpStartDate.value
   endDate.value = tmpEndDate.value
+  await getIncomeDataFetchData(formatDate(startDate.value), formatDate(endDate.value))
   closeMenu()
 }
 
@@ -501,18 +505,16 @@ const deleteItem = (item: Item): void => {
     dialogDelete.value = true
 }
 
-const deleteItemConfirm = (): void => {
+const deleteItemConfirm = async(): Promise<void> => {
   const deleteId = desserts.value[editedIndex.value].income_forecast_id
-  const res: ApiResponse[] = [
-    {
-      data: [
-        {
-          'income_forecast_id': deleteId
-        }
-      ]
+  try {
+      const response = await ApiEndpoint.incomeDelete(deleteId)
+      responseRsult(response.statusText, response.data.message)
+      serverErrorFlag.value = true
+    } catch (error) {
+      serverErrorFlag.value = true
+      console.log(error)
     }
-  ]
-  console.log(res)
   closeDelete()
 }
 
@@ -524,7 +526,6 @@ const close = (): void  => {
   })
 }
 
-
 const closeDelete = (): void  => {
   dialogDelete.value = false
   nextTick(() => {
@@ -533,18 +534,49 @@ const closeDelete = (): void  => {
   })
 }
 
-const save = (): void  => {
+const responseRsult = (responseStatus: string, message: string): void => {
+  if (responseStatus === 'OK') {
+      alertColor.value = 'success'
+      serverErrorTitle.value = '更新成功'
+      serverErrorText.value = message
+    } else {
+      alertColor.value = 'warning'
+      serverErrorTitle.value = '更新成功エラー'
+      serverErrorText.value = message
+    }
+}
+
+const save = async(): Promise<void> => {
   loading.value = true
-  const res: ApiResponse[] = [ { data: [] } ]
+  const res: ApiResponse = { data: [] }
   if (editedIndex.value > -1) {
-    console.log("edit", editedItem.value)
-    res[0].data.push(editedItem.value)
-    console.log("edit", res)
+    // 値を直接入力すると文字列型になるので、その際は整数値に変換する
+    editedItem.value['age'] = Number(editedItem.value['age'])
+    editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
+    editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
+    res.data.push(editedItem.value)
+    try {
+      const response = await ApiEndpoint.incomeUpdate(res)
+      responseRsult(response.statusText, response.data.message)
+      serverErrorFlag.value = true
+    } catch (error) {
+      serverErrorFlag.value = true
+      console.log(error)
+    }
   } else {
     editedItem.value['income_forecast_id'] = uuidv4()
     editedItem.value['user_id'] = userId.value
-    res[0].data.push(editedItem.value)
-    console.log("new", res)
+    editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
+    editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
+    res.data.push(editedItem.value)
+    try {
+      const response = await ApiEndpoint.incomeCreate(res)
+      responseRsult(response.statusText, response.data.message)
+      serverErrorFlag.value = true
+    } catch (error) {
+      serverErrorFlag.value = true
+      console.log(error)
+    }
   }
   loading.value = false
   close();
@@ -577,10 +609,12 @@ const getRangeDateFetchData = async(): Promise<void> => {
 }
 
 
-const getIncomeDataFetchData = async(): Promise<void> => {
+const getIncomeDataFetchData = async(startDate: string, endDate: string): Promise<void> => {
   const queryList: string[] = []
-  queryList.push("start_date=" + startDate.value)
-  queryList.push("end_date=" + endDate.value)
+  // 表示データの初期化
+  desserts.value.splice(0)
+  queryList.push("start_date=" + startDate)
+  queryList.push("end_date=" + endDate)
   queryList.push("user_id=" + userId.value)
   const fullPrames: string = "?" + queryList.join('&')
   try {
@@ -610,7 +644,7 @@ const getIncomeDataFetchData = async(): Promise<void> => {
 // ページ読み込み
 onMounted(async () => {
   await getRangeDateFetchData()
-  getIncomeDataFetchData()
+  getIncomeDataFetchData(formatDate(startDate.value), formatDate(endDate.value))
 })
 
 watch(dialog, (val: boolean): void => {
