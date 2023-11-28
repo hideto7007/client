@@ -17,16 +17,16 @@ class ApiEndpoint {
     return http.get("/api/years_income_date/" + params);
   }
 
-  incomeCreate(): Promise<any> {
-    return http.post("/api/income_create/");
+  incomeCreate(data: any): Promise<any> {
+    return http.post("/api/income_create/", data);
   }
 
-  incomeUpdate(): Promise<any> {
-    return http.put("/api/income_update/");
+  incomeUpdate(data: any): Promise<any> {
+    return http.put("/api/income_update/", data);
   }
 
-  incomeDelete(): Promise<any> {
-    return http.delete("/api/income_delete/");
+  incomeDelete(id: any): Promise<any> {
+    return http.delete(`/api/income_delete/?income_forecast_id=${id}`);
   }
 
   get(id: any): Promise<any> {
