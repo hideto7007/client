@@ -5,10 +5,10 @@
       width="auto"
     >
      <v-card>
-        <v-toolbar
-          color="error"
-          :title="props.title"
-        ></v-toolbar>
+      <v-toolbar
+        :color="props.color"
+        :title="props.title"
+      ></v-toolbar>
         <v-card-text>
           <div 
             class="text-h4 pa-12">{{ props.text }}</div>
@@ -31,6 +31,7 @@ import router from '../router'
 const dialog = ref<boolean>(true)
 // プロップを定義
 const props = defineProps<{
+  color: string,
   title: string,
   text: string
 }>();
