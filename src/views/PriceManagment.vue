@@ -42,6 +42,7 @@
   </div>
   <div v-else>
     <Alert
+      color="error"
       :title="serverErrorTitle"
       :text="serverErrorText"/>
   </div>
@@ -51,8 +52,6 @@
 import { ref, Ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
 import Alert from "../common/alert.vue"
-
-// TBD : 任意保険等のフォーム項目も追加する
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
