@@ -509,7 +509,7 @@ const deleteItemConfirm = async(): Promise<void> => {
   const deleteId = desserts.value[editedIndex.value].income_forecast_id
   try {
       const response = await ApiEndpoint.incomeDelete(deleteId)
-      responseRsult(response.statusText, response.data.message)
+      responseRsult(response.statusText, '削除', response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true
@@ -534,14 +534,14 @@ const closeDelete = (): void  => {
   })
 }
 
-const responseRsult = (responseStatus: string, message: string): void => {
+const responseRsult = (responseStatus: string, title: string, message: string): void => {
   if (responseStatus === 'OK') {
       alertColor.value = 'success'
-      serverErrorTitle.value = '更新成功'
+      serverErrorTitle.value = `${title}成功`
       serverErrorText.value = message
     } else {
       alertColor.value = 'warning'
-      serverErrorTitle.value = '更新成功エラー'
+      serverErrorTitle.value = `${title}エラー`
       serverErrorText.value = message
     }
 }
@@ -557,7 +557,7 @@ const save = async(): Promise<void> => {
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeUpdate(res)
-      responseRsult(response.statusText, response.data.message)
+      responseRsult(response.statusText, '更新', response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true
@@ -571,7 +571,7 @@ const save = async(): Promise<void> => {
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeCreate(res)
-      responseRsult(response.statusText, response.data.message)
+      responseRsult(response.statusText, '新規登録', response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true
