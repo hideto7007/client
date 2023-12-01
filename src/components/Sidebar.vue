@@ -30,7 +30,7 @@ const pages = ref<Item[]>([
   },
   {
     page: '年収管理',
-    url: '/about',
+    url: '/annualincomemanagement',
   },
   {
     page: 'piyo',
