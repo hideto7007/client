@@ -52,22 +52,32 @@
                         />
                 </v-col>
             </v-row>
+            <v-toolbar>
+                <template v-slot:prepend>
+                    <v-btn
+                        color="primary"
+                        prepend-icon="mdi-update"
+                        :disabled="!isUpdatable"
+                        class="px-8 mr-4"
+                        @click="updatePeriods"
+                    >
+                    検索
+                    </v-btn>
 
-            <v-btn
-                color="primary"
-                prepend-icon="mdi-update"
-                :disabled="!isUpdatable"
-                class="px-8 mr-4"
-                @click="updatePeriods"
-            >
-            検索
-            </v-btn>
-            <v-btn
-                prepend-icon="mdi-cancel"
-                @click="closeMenu"
-            >
-            キャンセル
-            </v-btn>
+                    <v-btn
+                        prepend-icon="mdi-cancel"
+                        @click="closeMenu"
+                    >
+                    キャンセル
+                    </v-btn>
+                </template>
+                    <v-btn
+                        prepend-icon="mdi-close"
+                        @click="clear"
+                    >
+                    クリア
+                    </v-btn>
+            </v-toolbar>
         </v-card-text>
         </v-card>
     </v-menu>
@@ -83,6 +93,8 @@ const emit = defineEmits()
 
 const startDate = ref<string>()
 const endDate = ref<string>()
+const clearStartDate = ref<string>()
+const clearEndDate = ref<string>()
 // 入力したがまだ反映はされていない、仮状態の期間
 const tmpStartDate = ref<string>()
 const tmpEndDate = ref<string>()
@@ -110,7 +122,7 @@ const closeMenu = (): void => {
 }
 
 // 仮状態の期間を反映する
-const updatePeriods = async(): Promise<void> => {
+const updatePeriods = (): void => {
     startDate.value = tmpStartDate.value
     endDate.value = tmpEndDate.value
     // AnnualIncomeManagement.vue側に日付検索結果を送信
@@ -135,6 +147,14 @@ const isUpdatable = computed<boolean>(() => {
     // 上記以外は true
     return true
 })
+
+const clear = (): void => {
+    startDate.value = clearStartDate.value
+    endDate.value = clearEndDate.value
+    emit('startDateStrDrawer', clearStartDate.value)
+    emit('endDateStrDrawer', clearEndDate.value)
+    closeMenu()
+}
 
 // Vue Datepicker に渡すオプション
 const datepickerOptions = {
@@ -173,8 +193,10 @@ const handleUpdateEndDatepicker = (): void => {
 onMounted(() => {
     tmpStartDate.value = propsDate.startDate
     startDate.value = propsDate.startDate
+    clearStartDate.value = propsDate.startDate
     tmpEndDate.value = propsDate.endDate
     endDate.value = propsDate.endDate
+    clearEndDate.value = propsDate.endDate
 })
 
 </script>
