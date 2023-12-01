@@ -252,20 +252,20 @@ const toggleEndDateStrDrawer = (endDate: string): void => {
 }
 
 interface Headers {
-    title: string, 
-    key: string, 
+  title: string, 
+  key: string, 
 }
 
 interface Item {
-    'income_forecast_id': string,
-    'payment_date': string,
-    'age': number,
-    'industry': string,
-    'total_amount': number,
-    'deduction_amount': number,
-    'take_home_amount': number,
-    'classification': string,
-    'user_id': number
+  'income_forecast_id': string,
+  'payment_date': string,
+  'age': number,
+  'industry': string,
+  'total_amount': number,
+  'deduction_amount': number,
+  'take_home_amount': number,
+  'classification': string,
+  'user_id': number
 }
 
 interface updateItem {
@@ -288,60 +288,60 @@ interface ApiResponse {
 }
 
 const headers = ref<Headers[]>([
-    {
-        title: labelList.value[0],
-        key: keyList.value[0]
-    },
-    {
-        title: labelList.value[1],
-        key: keyList.value[1]
-    },
-    {
-        title: labelList.value[2],
-        key: keyList.value[2]
-    },
-    {
-        title: labelList.value[3],
-        key: keyList.value[3]
-    },
-    {
-        title: labelList.value[4],
-        key: keyList.value[4]
-    },
-    {
-        title: labelList.value[5],
-        key: keyList.value[5]
-    },
-    {
-        title: '編集',
-        key: 'edit'
-    }
+  {
+      title: labelList.value[0],
+      key: keyList.value[0]
+  },
+  {
+      title: labelList.value[1],
+      key: keyList.value[1]
+  },
+  {
+      title: labelList.value[2],
+      key: keyList.value[2]
+  },
+  {
+      title: labelList.value[3],
+      key: keyList.value[3]
+  },
+  {
+      title: labelList.value[4],
+      key: keyList.value[4]
+  },
+  {
+      title: labelList.value[5],
+      key: keyList.value[5]
+  },
+  {
+      title: '編集',
+      key: 'edit'
+  }
 ])
 
 const headersList = computed(() => modeFlag.value === true ? headers.value : headers.value.slice(0, 6)) 
 
 const editedItem = ref<Item>({
-    income_forecast_id: '',
-    payment_date: '',
-    age: 18,
-    industry: '',
-    total_amount: 0,
-    deduction_amount: 0,
-    take_home_amount: 0,
-    classification: '',
-    user_id: 0
+  income_forecast_id: '',
+  payment_date: '',
+  age: 18,
+  industry: '',
+  total_amount: 0,
+  deduction_amount: 0,
+  take_home_amount: 0,
+  classification: '',
+  user_id: 0
 })
 
 const defaultItem = ref<Item>({
-    income_forecast_id: '',
-    payment_date: '',
-    age: 18,
-    industry: '',
-    total_amount: 0,
-    deduction_amount: 0,
-    take_home_amount: 0,
-    classification: '',
-    user_id: 0
+  income_forecast_id: '',
+  payment_date: '',
+  age: 18,
+  industry: '',
+  total_amount: 0,
+  deduction_amount: 0,
+  take_home_amount: 0,
+  classification: '',
+  user_id: 0
 })
 
 const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '編集')
