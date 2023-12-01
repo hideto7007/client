@@ -198,6 +198,9 @@
         </v-icon>
       </template>
     </v-data-table>
+    <Chart
+      :userId="userId">
+    </Chart>
   </div>
     <Alert
       v-if="serverErrorFlag"
@@ -213,6 +216,7 @@ import ApiEndpoint from "../common/apiEndpoint"
 import Validation from "../common/vaildation"
 import Alert from "../common/alert.vue"
 import Calender from "../common/calender.vue"
+import Chart from "../common/chart.vue"
 import Format from "../common/format"
 import { v4 as uuidv4 } from 'uuid'
 
