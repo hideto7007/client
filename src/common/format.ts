@@ -21,14 +21,21 @@ class Format {
         }
     }
     dateDiffInDays(dateStr1: string | undefined, dateStr2: string | undefined): number {
+
+        if (!dateStr1 || !dateStr2) {
+            // 親コンポーネントでundefined を事前にチェックしてるからここでは0を返すようにしている
+            return 0
+        }
+
         const date1 = new Date(dateStr1)
         const date2 = new Date(dateStr2)
-      
+
         // 差をミリ秒で取得し、日数に変換
         const timeDiff = Math.abs(date2.getTime() - date1.getTime())
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
-      
+    
         return diffDays
+
     }
 }
   

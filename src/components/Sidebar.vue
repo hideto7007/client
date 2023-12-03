@@ -50,3 +50,7 @@ const pageTransition = (key: number) : void => {
 }
 
 </script>
+
+<script lang="ts">
+export default {}
+</script>

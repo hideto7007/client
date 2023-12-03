@@ -31,6 +31,7 @@ import { useRouter } from 'vue-router'
 
 const useRouters = useRouter();
 
+
 const dialog = ref<boolean>(true)
 // プロップを定義
 const props = defineProps<{
@@ -48,4 +49,8 @@ const homeReturn = (): void => {
   }
   
 }
+</script>
+
+<script lang="ts">
+export default {}
 </script>

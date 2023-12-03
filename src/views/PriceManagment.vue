@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { ref, Ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
-import Alert from "../common/alert.vue"
+import Alert from "../components/alert.vue"
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
