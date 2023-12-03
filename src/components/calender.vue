@@ -87,7 +87,7 @@
 import { ref, computed, defineEmits, defineProps, onMounted } from 'vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import Format from './format'
+import Format from '../common/format'
 
 const emit = defineEmits()
 
@@ -199,6 +199,10 @@ onMounted(() => {
     clearEndDate.value = propsDate.endDate
 })
 
+</script>
+
+<script lang="ts">
+export default {}
 </script>
   
   <style scoped lang="scss">

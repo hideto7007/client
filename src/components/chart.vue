@@ -98,6 +98,9 @@ onMounted(async() => {
   await getYearsIncomeDataFetchData()
   createChart()
 })
-
   
+</script>
+
+<script lang="ts">
+export default {}
 </script>
