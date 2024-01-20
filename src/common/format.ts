@@ -1,12 +1,10 @@
 
 class Format {
     Date(date: Date | undefined | string): string  {
-        if (!date) {
-            return ''
-        }
-        else if (typeof date === "string") {
-            return date
-        } else {
+        const regex = /^\d{4}-\d{2}-\d{2}$/
+        if (typeof date === "string" && regex.test(date)) {
+            return date   
+        } else if (date instanceof Date && !isNaN(date.getTime())) {
             const yearNum = date.getFullYear()
             const monthNum = date.getMonth() + 1
             const dateNum = date.getDate()
@@ -18,9 +16,12 @@ class Format {
                 return `${yearNum}-${monthNum}-0${dateNum}`
             }
             return `${yearNum}-${monthNum}-${dateNum}`
+        } else {
+            return ''
         }
     }
-    dateDiffInDays(dateStr1: string | undefined, dateStr2: string | undefined): number {
+
+    dateDiffInDays(dateStr1: string | undefined, dateStr2: string | undefined): number | string {
 
         if (!dateStr1 || !dateStr2) {
             // 親コンポーネントでundefined を事前にチェックしてるからここでは0を返すようにしている
@@ -30,12 +31,16 @@ class Format {
         const date1 = new Date(dateStr1)
         const date2 = new Date(dateStr2)
 
+        // 日付の妥当性をチェック
+        if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+            throw new Error("Invalid date string provided");
+        }
+
         // 差をミリ秒で取得し、日数に変換
         const timeDiff = Math.abs(date2.getTime() - date1.getTime())
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
     
         return diffDays
-
     }
 }
   
