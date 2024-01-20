@@ -1,10 +1,9 @@
 export default {
-    preset: 'ts-jest/presets/js-with-babel',
-    testEnvironment: 'jsdom',
-    transform: {
-      '^.+\\.vue$': 'vue-jest',
-      '^.+\\.tsx?$': 'ts-jest',
-    },
-    moduleFileExtensions: ['vue', 'js', 'ts'],
-  };
-  
+  preset: 'ts-jest/presets/js-with-babel',
+  testEnvironment: 'jsdom',
+  transform: {
+    '^.+\\.vue$': '@vue/vue3-jest',
+    '^.+\\.tsx?$': 'ts-jest'
+  },
+  moduleFileExtensions: ['vue', 'js', 'ts'],
+};
