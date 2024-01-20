@@ -29,7 +29,7 @@
   
 <script setup lang="ts">
 import { ref, defineEmits, defineProps, onMounted  } from 'vue'
-import router from '../router'
+import router from '@/router'
   
 
 const emit = defineEmits()

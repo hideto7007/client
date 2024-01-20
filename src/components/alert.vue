@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
-import router from '../router'
+import router from '@/router'
 import { useRouter } from 'vue-router'
 
 const useRouters = useRouter();

@@ -212,12 +212,12 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
-import ApiEndpoint from "../common/apiEndpoint"
-import Validation from "../common/vaildation"
-import Alert from "../components/alert.vue"
-import Calender from "../components/calender.vue"
-import Chart from "../components/chart.vue"
-import Format from "../common/format"
+import ApiEndpoint from "@/common/apiEndpoint"
+import Validation from "@/common/vaildation"
+import Alert from "@/components/alert.vue"
+import Calender from "@/components/calender.vue"
+import Chart from "@/components/chart.vue"
+import Format from "@/common/format"
 import { v4 as uuidv4 } from 'uuid'
 
 
