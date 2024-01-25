@@ -41,9 +41,9 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import Sidebar from '@/components/Sidebar.vue'
-import MyPage from '@/components/MyPage.vue'
-import router from '@/router'
+import Sidebar from '../components/Sidebar.vue'
+import MyPage from '../components/MyPage.vue'
+import router from '../router'
 
 const pageDrawer = ref<boolean>(false)
 const myPageDialog = ref<boolean>(false)

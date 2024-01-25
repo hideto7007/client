@@ -26,19 +26,16 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
-import router from '@/router'
+import router from '../router'
 import { useRouter } from 'vue-router'
+import { AlertProps } from '../type/types'
 
 const useRouters = useRouter();
 
 
 const dialog = ref<boolean>(true)
 // プロップを定義
-const props = defineProps<{
-  color: string,
-  title: string,
-  text: string
-}>();
+const props = defineProps<AlertProps>();
 
 const homeReturn = (): void => {
   dialog.value = false
@@ -52,5 +49,12 @@ const homeReturn = (): void => {
 </script>
 
 <script lang="ts">
-export default {}
+
+// export type AlertProps = {
+//   color: string;
+//   title: string;
+//   text: string;
+// };
+// export default {}
+
 </script>

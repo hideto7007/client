@@ -25,6 +25,6 @@
       "@/*": ["src/*"] // srcディレクトリを `@` にマッピング
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "./shims-vue.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

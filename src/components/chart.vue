@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, onMounted, defineProps } from 'vue'
 import Chart from 'chart.js/auto'
-import ApiEndpoint from '@/common/apiEndpoint'
+import ApiEndpoint from '../common/apiEndpoint'
 
 
 const chartRef = ref<any>(null)

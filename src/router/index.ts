@@ -4,22 +4,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: () => import('@/views/home.vue')
+    component: () => import('../views/home.vue')
   },
   {
     path: '/pricemanagement',
     name: 'pricemanagement',
-    component: () => import('@/views/PriceManagment.vue')
+    component: () => import('../views/PriceManagment.vue')
   },
   {
     path: '/annualincomemanagement',
     name: 'annualincomemanagement',
-    component: () => import('@/views/AnnualIncomeManagement.vue')
+    component: () => import('../views/AnnualIncomeManagement.vue')
   },
   {
     path: '/mypage/version',
     name: 'version',
-    component: () => import('@/views/mypage/Version.vue')
+    component: () => import('../views/mypage/Version.vue')
   }
 ]
 

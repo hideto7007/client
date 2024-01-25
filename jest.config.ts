@@ -6,4 +6,7 @@ export default {
     '^.+\\.tsx?$': 'ts-jest'
   },
   moduleFileExtensions: ['vue', 'js', 'ts'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };
