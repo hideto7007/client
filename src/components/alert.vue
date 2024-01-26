@@ -28,14 +28,17 @@
 import { ref, defineProps } from 'vue'
 import router from '../router'
 import { useRouter } from 'vue-router'
-import { AlertProps } from '../type/types'
+// import { AlertProps } from '../type/types'
 
 const useRouters = useRouter();
 
-
 const dialog = ref<boolean>(true)
 // プロップを定義
-const props = defineProps<AlertProps>();
+const props = defineProps({
+  color: String,
+  title: String,
+  text: String
+});
 
 const homeReturn = (): void => {
   dialog.value = false
@@ -55,6 +58,6 @@ const homeReturn = (): void => {
 //   title: string;
 //   text: string;
 // };
-// export default {}
+export default {}
 
 </script>

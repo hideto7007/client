@@ -14,11 +14,11 @@ describe('alert.vue', () => {
   beforeEach(() => {
     injectRouterMock(router)
   })
-
+  const wrapper = mount(Alert, {
+    props: { color: 'success', title: 'テストタイトル1', text: 'テストテキスト1' }
+  })
   it('renders props when passed check 1', () => {
-    const wrapper = mount(Alert, {
-      props: { color: 'success', title: 'テストタイトル1', text: 'テストテキスト1' }
-    })
+
     expect(wrapper.vm.color).toBe('success')
     expect(wrapper.vm.title).toBe('テストタイトル1')
     expect(wrapper.vm.text).toBe('テストテキスト1')
