@@ -21,7 +21,8 @@ const sideItems = ref<sideItem[]>([
 ```
 
 - unittest exec command
-```bash 
+
+```bash
 
 # test exec command
 npm run test
@@ -33,4 +34,7 @@ npm run test -- --verbose
 # test coverage check command
 npm run test -- --coverage
 
+
+# test one file check command
+npm run test -- test/components/alert.spec.ts
 ```

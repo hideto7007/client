@@ -28,7 +28,6 @@
 import { ref, defineProps } from 'vue'
 import router from '../router'
 import { useRouter } from 'vue-router'
-// import { AlertProps } from '../type/types'
 
 const useRouters = useRouter();
 
@@ -53,11 +52,6 @@ const homeReturn = (): void => {
 
 <script lang="ts">
 
-// export type AlertProps = {
-//   color: string;
-//   title: string;
-//   text: string;
-// };
 export default {}
 
 </script>

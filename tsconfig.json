@@ -23,7 +23,11 @@
     "baseUrl": ".", // プロジェクトのルートディレクトリを基準とする
     "paths": {
       "@/*": ["src/*"] // srcディレクトリを `@` にマッピング
-    }
+    },
+    "types": [
+      "webpack-env",
+      "jest" // この行を追加
+    ],
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "./test/setting/shims-vue.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
