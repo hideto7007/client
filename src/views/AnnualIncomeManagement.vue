@@ -423,6 +423,7 @@ const save = async(): Promise<void> => {
     }
   } else {
     editedItem.value['income_forecast_id'] = uuidv4()
+    editedItem.value['age'] = Number(editedItem.value['age'])
     editedItem.value['user_id'] = userId.value
     editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
     editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
