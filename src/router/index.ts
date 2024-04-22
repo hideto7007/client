@@ -23,10 +23,14 @@ const routes: Array<RouteRecordRaw> = [
   }
 ]
 
-// const isProduction = import.meta.env.MODE === 'production';
+// Jestテスト環境かどうかを判定
+const isTestEnv = process.env.NODE_ENV === 'test'
+
+// テスト環境であればモックの値を、そうでなければ `import.meta.env.BASE_URL` を使用
+const historyMode = isTestEnv ? '/' : import.meta.env.BASE_URL
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL), // 修正点
+  history: createWebHistory(historyMode), // 修正点
   routes
 });
 

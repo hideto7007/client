@@ -404,14 +404,14 @@ const responseRsult = (responseStatus: string, title: string, message: string): 
     }
 }
 
-const save = async(): Promise<void> => {
+const save = async (): Promise<void> => {
   loading.value = true
   const res: ApiResponse = { data: [] }
+  // 値を直接入力すると文字列型になるので、その際は整数値に変換する
+  editedItem.value['age'] = Number(editedItem.value['age'])
+  editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
+  editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
   if (editedIndex.value > -1) {
-    // 値を直接入力すると文字列型になるので、その際は整数値に変換する
-    editedItem.value['age'] = Number(editedItem.value['age'])
-    editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
-    editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeUpdate(res)
@@ -424,8 +424,6 @@ const save = async(): Promise<void> => {
   } else {
     editedItem.value['income_forecast_id'] = uuidv4()
     editedItem.value['user_id'] = userId.value
-    editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
-    editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeCreate(res)

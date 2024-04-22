@@ -31,14 +31,13 @@ import { useRouter } from 'vue-router'
 
 const useRouters = useRouter();
 
-
 const dialog = ref<boolean>(true)
 // プロップを定義
-const props = defineProps<{
-  color: string,
-  title: string,
-  text: string
-}>();
+const props = defineProps({
+  color: String,
+  title: String,
+  text: String
+});
 
 const homeReturn = (): void => {
   dialog.value = false
@@ -52,5 +51,7 @@ const homeReturn = (): void => {
 </script>
 
 <script lang="ts">
+
 export default {}
+
 </script>
