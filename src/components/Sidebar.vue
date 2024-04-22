@@ -33,8 +33,8 @@ const pages = ref<Item[]>([
     url: '/annualincomemanagement',
   },
   {
-    page: 'piyo',
-    url: 'no path',
+    page: '株価予測',
+    url: '/stockpriceprediction',
   },
   {
     page: 'hoge',
