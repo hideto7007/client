@@ -6,7 +6,9 @@ export default {
         {
           targets: {
             node: "current",
+            esmodules: true
           },
+          modules: 'commonjs'
         },
       ],
     ],

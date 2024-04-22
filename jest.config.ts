@@ -10,10 +10,16 @@ export default {
   "testEnvironmentOptions": {
     "customExportConditions": ["node", "node-addons"]
   },
-  setupFiles: ['./tests/setting/jest.setup.ts'],
+  setupFiles: [
+    './tests/setting/jest.setup.ts',
+    './tests/setting/setup.ts',
+  ],
   roots: [
     "<rootDir>/src",
     "<rootDir>/tests"
+  ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(vuetify)/)',  // Vuetifyを除外しないように設定
   ],
   testMatch: [
     "**/__tests__/**/*.+(ts|tsx|js)",
