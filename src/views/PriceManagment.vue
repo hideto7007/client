@@ -3,12 +3,10 @@
     <div class="price-title">
       <h1>貯金額算出</h1>
     </div>
-    <div v-if="!dateFlag">
-      <v-col cols="4" md="4">
-        <v-text-field v-model="date" :label="PriceManagementConst.SavingsPeriod" :type="Type.Date"
-          clearable></v-text-field>
-      </v-col>
-    </div>
+    <v-col cols="4" md="4">
+      <v-text-field v-model="date" :label="PriceManagementConst.SavingsPeriod" :type="Type.Date" :min="today"
+        clearable></v-text-field>
+    </v-col>
     <div>
       <v-text-field v-for="(item) in priceList" :key="item.label" v-model="item.vModel" :label="item.label"
         :type="Type.Number"></v-text-field>
@@ -24,15 +22,15 @@
     <v-card class="mx-auto" max-width="370">
       <v-card-text class="card-style">
         <p class="text-h5 text--primary">
-          月の貯蓄額 {{ leftAmount }} 円
+          月の貯蓄額 {{ leftAmount.toLocaleString() }} 円
         </p><v-card-actions />
         <p class="text-h5 text--primary">
-          年の貯蓄額 {{ totalAmount }} 円
+          年の貯蓄額 {{ totalAmount.toLocaleString() }} 円
         </p><v-card-actions />
         <div class="text-h5 text--primary">
-          <p v-if="date !== null && date !== undefined">
+          <p v-if="date && dateFlag">
             現在～{{ date.slice(0, 4) + "/" + date.slice(5, 7) + "/" + date.slice(-2) }}までの貯蓄額
-            {{ totalRangeAmount }} 円
+            {{ totalRangeAmount.toLocaleString() }} 円
           </p>
           <p v-else>
             現在～までの貯蓄額 0 円
@@ -51,12 +49,13 @@ import { ref, Ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
 import Alert from "../components/alert.vue"
 import { PriceManagementConst, ErrorConst, Type } from "../common/const"
+import Format from "../common/format"
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
 const localStorageKeyNameDate = ref<string>('date')
 
-const today = new Date()
+const today = Format.formatDate()
 const range = ref<number>(1)
 const date = ref<string>()
 const dateFlag = ref<boolean>(false)
@@ -88,7 +87,8 @@ type Date = {
 
 type amountData = {
   leftAmount: number,
-  totalAmount: number
+  totalAmount: number,
+  totalRangeAmount: number,
 }
 
 interface Item {
@@ -130,6 +130,7 @@ const loadFromLocalStorage = (): void => {
 
   if (StoredDate) {
     const parseDate: Date = JSON.parse(StoredDate)
+    dateFlag.value = true
     date.value = parseDate.date
   }
 
@@ -151,6 +152,7 @@ const getPriceManagementLocalStorage = (): void => {
     const parsedData: amountData = JSON.parse(storedData)
     leftAmount.value = parsedData.leftAmount
     totalAmount.value = parsedData.totalAmount
+    totalRangeAmount.value = parsedData.totalRangeAmount
   }
 }
 
@@ -170,12 +172,9 @@ const handleSubmit = (): void => {
   }
 
   localStorage.setItem(localStorageKeyNameDate.value, JSON.stringify(dateToSave))
-
   localStorage.setItem(localStorageKeyNameSumitFpInfo.value, JSON.stringify(dataToSave))
-
   getPriceManagementFetchData()
 }
-
 
 const getPriceManagementFetchData = async (): Promise<void> => {
     const queryList: string[] = []
@@ -190,17 +189,27 @@ const getPriceManagementFetchData = async (): Promise<void> => {
     try {
       const response = await ApiEndpoint.getPriceManagement(fullPrames)
       const data = response.data // レスポンスからデータを取得
+
+      const resLeftAmount = data.message.result.left_amount
+      const resTotalAmount = data.message.result.total_amount
+
+      if (date.value) {
+        range.value = getRange(today, date.value)
+        dateFlag.value = true
+      } else {
+        dateFlag.value = false
+      }
+
+      leftAmount.value = resLeftAmount
+      totalAmount.value = resTotalAmount
+      totalRangeAmount.value = resLeftAmount * range.value
+
       const amountDataResult: amountData = {
-        leftAmount: data.message.result.left_amount,
-        totalAmount: data.message.result.total_amount
+        leftAmount: resLeftAmount,
+        totalAmount: resTotalAmount,
+        totalRangeAmount: totalRangeAmount.value
       }
       localStorage.setItem(localStorageKeyNameResult.value, JSON.stringify(amountDataResult))
-
-      console.log(today, date.value)
-
-      leftAmount.value = amountDataResult.leftAmount
-      totalAmount.value = amountDataResult.totalAmount
-      totalRangeAmount.value = amountDataResult.leftAmount * range.value
     } catch (error) {
       serverErrorFlag.value = true
       console.error('Error fetching data:', error)
@@ -219,6 +228,18 @@ const handleReset = (): void => {
   insurance.value = 0
   date.value = ""
   localStorage.clear()
+}
+
+const getRange = (today: string, feature: string): number => {
+  const todayDate = new Date(today)
+  const featureDate = new Date(feature)
+
+  const yearMonthToday = todayDate.getTime() 
+  const yearMonthFeature = featureDate.getTime() 
+
+  const diffMonth = yearMonthFeature - yearMonthToday
+
+  return Math.round(diffMonth / (1000 * 60 * 60 * 24 * 30))
 }
 
 // ページ読み込み時に localStorage からデータを読み込む
