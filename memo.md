@@ -37,4 +37,11 @@ npm run test -- --coverage
 
 # test one file check command
 npm run test -- test/components/alert.spec.ts
+
+# Node.jsとnpmのバージョンを更新
+RUN npm install -g n
+RUN n stable
+
+# Vue.jsのインストール
+RUN npm install -g @vue/cli
 ```
