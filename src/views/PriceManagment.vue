@@ -3,7 +3,7 @@
     <div class="price-title">
       <h1>貯金額算出</h1>
     </div>
-    <v-col cols="4" md="4">
+    <v-col cols="2" md="2">
       <v-text-field v-model="date" :label="PriceManagementConst.SavingsPeriod" :type="Type.Date" :min="today"
         clearable></v-text-field>
     </v-col>
