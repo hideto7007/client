@@ -1,50 +1,46 @@
 <template>
   <div v-if="!serverErrorFlag">
     <div class="price-title">
-      <h1>月と年間の貯金額算出</h1>
+      <h1>貯金額算出</h1>
     </div>
+    <v-col cols="2" md="2">
+      <v-text-field v-model="date" :label="PriceManagementConst.SavingsPeriod" :type="Type.Date" :min="today"
+        clearable></v-text-field>
+    </v-col>
     <div>
-      <v-text-field 
-        v-for="(item) in priceList" :key="item.label"
-        v-model="item.vModel"
-        :label="item.label"
-        type="number"
-      ></v-text-field>
+      <v-text-field v-for="(item) in priceList" :key="item.label" v-model="item.vModel" :label="item.label"
+        :type="Type.Number"></v-text-field>
 
-      <v-btn
-        class="me-4"
-        type="submit"
-        color="success"
-        @click="handleSubmit"
-      >
+      <v-btn class="me-4" :type="Type.Submit" :color="Type.Success" @click="handleSubmit">
         計算
       </v-btn>
 
-      <v-btn 
-        @click="handleReset"
-        color="blue-grey">
+      <v-btn @click="handleReset" color="blue-grey">
         クリア
       </v-btn>
     </div>
-    <v-card
-      class="mx-auto"
-      max-width="370"
-    >
+    <v-card class="mx-auto" max-width="370">
       <v-card-text class="card-style">
         <p class="text-h5 text--primary">
-          月の貯蓄額 {{ leftAmountValue }} 円
+          月の貯蓄額 {{ leftAmount.toLocaleString() }} 円
         </p><v-card-actions />
         <p class="text-h5 text--primary">
-          年の貯蓄額 {{ totalAmountValue }} 円
-        </p>
+          年の貯蓄額 {{ totalAmount.toLocaleString() }} 円
+        </p><v-card-actions />
+        <div class="text-h5 text--primary">
+          <p v-if="date && dateFlag">
+            現在～{{ date.slice(0, 4) + "/" + date.slice(5, 7) + "/" + date.slice(-2) }}までの貯蓄額
+            {{ totalRangeAmount.toLocaleString() }} 円
+          </p>
+          <p v-else>
+            現在～までの貯蓄額 0 円
+          </p>
+        </div>
       </v-card-text>
     </v-card>
   </div>
   <div v-else>
-    <Alert
-      color="error"
-      :title="serverErrorTitle"
-      :text="serverErrorText"/>
+    <Alert :color="Type.Error" :title="serverErrorTitle" :text="serverErrorText" />
   </div>
 </template>
 
@@ -52,21 +48,29 @@
 import { ref, Ref, onMounted } from 'vue'
 import ApiEndpoint from "../common/apiEndpoint"
 import Alert from "../components/alert.vue"
+import { PriceManagementConst, ErrorConst, Type } from "../common/const"
+import Format from "../common/format"
 
 const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
+const localStorageKeyNameDate = ref<string>('date')
 
-const moneyReceivedValue = ref<number>(0)
-const bounsValue = ref<number>(0)
-const fixedCostValue = ref<number>(0)
-const loanValue = ref<number>(0)
-const privateValue = ref<number>(0)
-const insuranceValue = ref<number>(0)
-const leftAmountValue = ref<number>(0)
-const totalAmountValue = ref<number>(0)
+const today = Format.formatDate()
+const range = ref<number>(1)
+const date = ref<string>()
+const dateFlag = ref<boolean>(false)
+const moneyReceived = ref<number>(0)
+const bouns = ref<number>(0)
+const fixedCost = ref<number>(0)
+const loan = ref<number>(0)
+const privates = ref<number>(0)
+const insurance = ref<number>(0)
+const leftAmount = ref<number>(0)
+const totalAmount = ref<number>(0)
+const totalRangeAmount = ref<number>(0)
 const serverErrorFlag = ref<boolean>(false)
-const serverErrorTitle = ref<string>('サーバーエラー 500エラー')
-const serverErrorText = ref<string>('サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。')
+const serverErrorTitle = ref<string>(ErrorConst.InterServerError)
+const serverErrorText = ref<string>(ErrorConst.ErrorMessage)
 
 type priceData = {
   moneyReceived: number, 
@@ -77,9 +81,14 @@ type priceData = {
   insurance: number
 }
 
+type Date = {
+  date: string
+}
+
 type amountData = {
   leftAmount: number,
-  totalAmount: number
+  totalAmount: number,
+  totalRangeAmount: number,
 }
 
 interface Item {
@@ -89,43 +98,50 @@ interface Item {
 
 const priceList = ref<Item[]>([
   {
-    label: '手取の月収',
-    vModel: moneyReceivedValue,
+    label: PriceManagementConst.MoneyReceived,
+    vModel: moneyReceived,
   },
   {
-    label: 'ボーナス(1年の合計)',
-    vModel: bounsValue,
+    label: PriceManagementConst.Bouns,
+    vModel: bouns,
   },
   {
-    label: '固定費(家賃、光熱費、通信費、サブスクリプション、積み立て投資などなど・・・)',
-    vModel: fixedCostValue,
+    label: PriceManagementConst.FixedCost,
+    vModel: fixedCost,
   },
   {
-    label: 'ローン(教育、車)',
-    vModel: loanValue,
+    label: PriceManagementConst.Loan,
+    vModel: loan,
   },
   {
-    label: 'プライベート(月に自身が自由に使える)',
-    vModel: privateValue,
+    label: PriceManagementConst.Privates,
+    vModel: privates,
   },
   {
-    label: '保険(生命保険、任意保険など)',
-    vModel: insuranceValue,
+    label: PriceManagementConst.Insurance,
+    vModel: insurance,
   },
 ])
 
 
 const loadFromLocalStorage = (): void => {
   const storedData = localStorage.getItem(localStorageKeyNameSumitFpInfo.value)
+  const StoredDate = localStorage.getItem(localStorageKeyNameDate.value)
+
+  if (StoredDate) {
+    const parseDate: Date = JSON.parse(StoredDate)
+    dateFlag.value = true
+    date.value = parseDate.date
+  }
 
   if (storedData) {
     const parsedData: priceData = JSON.parse(storedData)
-    moneyReceivedValue.value = parsedData.moneyReceived
-    bounsValue.value = parsedData.bouns
-    fixedCostValue.value = parsedData.fixedCost
-    loanValue.value = parsedData.loan
-    privateValue.value = parsedData.private
-    insuranceValue.value = parsedData.insurance
+    moneyReceived.value = parsedData.moneyReceived
+    bouns.value = parsedData.bouns
+    fixedCost.value = parsedData.fixedCost
+    loan.value = parsedData.loan
+    privates.value = parsedData.private
+    insurance.value = parsedData.insurance
   }
 }
 
@@ -134,49 +150,66 @@ const getPriceManagementLocalStorage = (): void => {
 
   if (storedData) {
     const parsedData: amountData = JSON.parse(storedData)
-    leftAmountValue.value = parsedData.leftAmount
-    totalAmountValue.value = parsedData.totalAmount
+    leftAmount.value = parsedData.leftAmount
+    totalAmount.value = parsedData.totalAmount
+    totalRangeAmount.value = parsedData.totalRangeAmount
   }
 }
 
 const handleSubmit = (): void => {
   // 各項目の値を priceArr にセット
   const dataToSave: priceData = {
-    moneyReceived: moneyReceivedValue.value,
-    bouns: bounsValue.value,
-    fixedCost: fixedCostValue.value,
-    loan: loanValue.value,
-    private: privateValue.value,
-    insurance: insuranceValue.value,
+    moneyReceived: moneyReceived.value,
+    bouns: bouns.value,
+    fixedCost: fixedCost.value,
+    loan: loan.value,
+    private: privates.value,
+    insurance: insurance.value,
   }
 
-  localStorage.setItem(localStorageKeyNameSumitFpInfo.value, JSON.stringify(dataToSave))
+  const dateToSave: Date = {
+    date: date.value ?? ''
+  }
 
+  localStorage.setItem(localStorageKeyNameDate.value, JSON.stringify(dateToSave))
+  localStorage.setItem(localStorageKeyNameSumitFpInfo.value, JSON.stringify(dataToSave))
   getPriceManagementFetchData()
 }
 
-
 const getPriceManagementFetchData = async (): Promise<void> => {
     const queryList: string[] = []
-    queryList.push("money_received=" + moneyReceivedValue.value)
-    queryList.push("bouns=" + bounsValue.value)
-    queryList.push("fixed_cost=" + fixedCostValue.value)
-    queryList.push("loan=" + loanValue.value)
-    queryList.push("private=" + privateValue.value)
-    queryList.push("insurance=" + insuranceValue.value)
+    queryList.push("money_received=" + moneyReceived.value)
+    queryList.push("bouns=" + bouns.value)
+    queryList.push("fixed_cost=" + fixedCost.value)
+    queryList.push("loan=" + loan.value)
+    queryList.push("private=" + privates.value)
+    queryList.push("insurance=" + insurance.value)
     const fullPrames: string = "?" + queryList.join('&')
     console.log(fullPrames)
     try {
       const response = await ApiEndpoint.getPriceManagement(fullPrames)
       const data = response.data // レスポンスからデータを取得
+
+      const resLeftAmount = data.message.result.left_amount
+      const resTotalAmount = data.message.result.total_amount
+
+      if (date.value) {
+        range.value = getRange(today, date.value)
+        dateFlag.value = true
+      } else {
+        dateFlag.value = false
+      }
+
+      leftAmount.value = resLeftAmount
+      totalAmount.value = resTotalAmount
+      totalRangeAmount.value = resLeftAmount * range.value
+
       const amountDataResult: amountData = {
-        leftAmount: data.message.result.left_amount,
-        totalAmount: data.message.result.total_amount
+        leftAmount: resLeftAmount,
+        totalAmount: resTotalAmount,
+        totalRangeAmount: totalRangeAmount.value
       }
       localStorage.setItem(localStorageKeyNameResult.value, JSON.stringify(amountDataResult))
-
-      leftAmountValue.value = amountDataResult.leftAmount
-      totalAmountValue.value = amountDataResult.totalAmount
     } catch (error) {
       serverErrorFlag.value = true
       console.error('Error fetching data:', error)
@@ -184,15 +217,29 @@ const getPriceManagementFetchData = async (): Promise<void> => {
 }
 
 const handleReset = (): void => {
-  moneyReceivedValue.value = 0
-  bounsValue.value = 0
-  fixedCostValue.value = 0
-  loanValue.value = 0
-  privateValue.value = 0
-  leftAmountValue.value = 0
-  totalAmountValue.value = 0
-  insuranceValue.value = 0
+  moneyReceived.value = 0
+  bouns.value = 0
+  fixedCost.value = 0
+  loan.value = 0
+  privates.value = 0
+  leftAmount.value = 0
+  totalAmount.value = 0
+  totalRangeAmount.value = 0
+  insurance.value = 0
+  date.value = ""
   localStorage.clear()
+}
+
+const getRange = (today: string, feature: string): number => {
+  const todayDate = new Date(today)
+  const featureDate = new Date(feature)
+
+  const yearMonthToday = todayDate.getTime() 
+  const yearMonthFeature = featureDate.getTime() 
+
+  const diffMonth = yearMonthFeature - yearMonthToday
+
+  return Math.round(diffMonth / (1000 * 60 * 60 * 24 * 30))
 }
 
 // ページ読み込み時に localStorage からデータを読み込む

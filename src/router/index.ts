@@ -17,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/AnnualIncomeManagement.vue')
   },
   {
+    path: '/stockpriceprediction',
+    name: 'stockpriceprediction',
+    component: () => import('../views/StockPricePrediction.vue')
+  },
+  {
     path: '/mypage/version',
     name: 'version',
     component: () => import('../views/mypage/Version.vue')
