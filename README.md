@@ -43,7 +43,7 @@ createApp(App)
 
 ```
 
-- dockerでの環境構築
+- docker環境構築
   ```bash
   # new docker images command
   docker build -t client .
