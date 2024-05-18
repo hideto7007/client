@@ -9,3 +9,6 @@ RUN apt-get update && apt-get install -y \
     npm \
     git \
     && apt-get clean
+
+# open port 5173
+EXPOSE 5173
