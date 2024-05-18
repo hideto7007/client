@@ -55,7 +55,7 @@ const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
 const localStorageKeyNameDate = ref<string>('date')
 
-const today = Format.formatDate()
+const today = Format.formatDate(new Date())
 const range = ref<number>(1)
 const date = ref<string>()
 const dateFlag = ref<boolean>(false)

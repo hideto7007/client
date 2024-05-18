@@ -43,8 +43,8 @@ class Format {
         return diffDays
     }
 
-    formatDate() {
-        let d = new Date(new Date()),
+    formatDate(date: Date) {
+        let d = date,
             month = '' + (d.getMonth() + 1),
             day = '' + d.getDate(),
             year = d.getFullYear()

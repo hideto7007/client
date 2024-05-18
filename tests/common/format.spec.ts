@@ -83,6 +83,14 @@ describe('Format.dateDiffInDays method', () => {
 
     expect(Format.dateDiffInDays(date1, date1)).toBe(0)
   })
+
+  it('return date diff days undefiend', () => {
+    const date1: undefined = undefined
+    const date2: string = "2024-01-10"
+
+    expect(Format.dateDiffInDays(date1, date2)).toBe(0)
+    expect(Format.dateDiffInDays(date2, date1)).toBe(0)
+  })
  
   it('throw check 1', () => {
     const date1: string = "hyhy-gt-jj"
@@ -109,5 +117,26 @@ describe('Format.dateDiffInDays method', () => {
     expect(() => {
         Format.dateDiffInDays(date5, date6)
     }).toThrow("Invalid date string provided")
+  })
+})
+
+describe('Format.formatDate method', () => {
+  it('month length 2 digits or less', () => {
+    const date1: Date = new Date(2024, 0, 10)
+    const date2: string = "2024-01-10"
+
+    expect(Format.formatDate(date1)).toMatch(date2)
+  })
+  it('day length 2 digits or less', () => {
+    const date1: Date = new Date(2024, 9, 1)
+    const date2: string = "2024-10-01"
+
+    expect(Format.formatDate(date1)).toMatch(date2)
+  })
+  it('maoth and day length 2 digits', () => {
+    const date1: Date = new Date(2024, 11, 12)
+    const date2: string = "2024-12-12"
+
+    expect(Format.formatDate(date1)).toMatch(date2)
   })
 })
