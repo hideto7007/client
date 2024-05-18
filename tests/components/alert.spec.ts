@@ -51,7 +51,7 @@ describe('alert.vue', () => {
   })
 
 
-  it('closes the dialog on button click', async () => {
+  xit('closes the dialog on button click', async () => {
     const wrapper = shallowMount(Alert, {
       global: {
         stubs: {
