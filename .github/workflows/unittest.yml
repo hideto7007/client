@@ -23,6 +23,7 @@ jobs:
             cd /client && \
             npm install -g n && \
             npm install -g @vue/cli && \
+            npm install --save-dev jest && \
             echo "================= test start ================= && \
             npm run test -- --coverage && \
             echo "================= test end ================="
