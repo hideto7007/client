@@ -15,7 +15,7 @@ jobs:
           node-version: "20"
 
       - name: Build Docker image
-        run: docker f Dockerfile.ci build -t unittest .
+        run: docker build -f Dockerfile.ci -t unittest .
 
       - name: Run tests inside Docker container and Unittest
         run: |
