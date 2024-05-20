@@ -1,5 +1,5 @@
-# Node.jsの公式イメージをベースとする
-FROM node:16
+# ベースイメージを指定
+FROM ubuntu:20.04
 
 # パッケージの更新と必要なパッケージのインストール
 RUN apt-get update && apt-get install -y \
@@ -9,6 +9,3 @@ RUN apt-get update && apt-get install -y \
     npm \
     git \
     && apt-get clean
-
-# open port 5173
-EXPOSE 5173
