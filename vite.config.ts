@@ -7,10 +7,15 @@ export default defineConfig({
   server: {
     proxy: {
       "^/api*": {
-        target: 'http://localhost:8080', // このURLをサーバーのベースURLに置き換えてください
+        target: 'http://host.docker.internal:8080', // このURLをサーバーのベースURLに置き換えてください
         changeOrigin: true,
         rewrite: (path) => path.replace("^/api", ""),
       },
     },
   },
 })
+
+
+// TODO
+// ローカルサーバーで実行する際のIP http://localhost:8080
+// dockerコンテナ起動した際のIP http://host.docker.internal:8080
