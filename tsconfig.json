@@ -29,8 +29,9 @@
       ] // srcディレクトリを `@` にマッピング
     },
     "types": [
-      "webpack-env",
-      "jest" // この行を追加
+      // "webpack-env",
+      "jest", // この行を追加
+      "node"
     ],
   },
   "include": [
