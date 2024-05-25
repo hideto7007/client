@@ -44,7 +44,7 @@ const homeReturn = (): void => {
   if (props.color === 'error') {
     router.push('/')
   } else {
-    useRouters.go(router.currentRoute)
+    useRouters.go(0)
   }
   
 }

@@ -21,7 +21,7 @@ class Format {
         }
     }
 
-    dateDiffInDays(dateStr1: string | undefined, dateStr2: string | undefined): number | string {
+    dateDiffInDays(dateStr1: string | undefined, dateStr2: string | undefined): number {
 
         if (!dateStr1 || !dateStr2) {
             // 親コンポーネントでundefined を事前にチェックしてるからここでは0を返すようにしている
