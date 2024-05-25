@@ -268,6 +268,7 @@ interface Item {
   'total_amount': number,
   'deduction_amount': number,
   'take_home_amount': number,
+  'update_user': string,
   'classification': string,
   'user_id': number
 }
@@ -332,6 +333,7 @@ const editedItem = ref<Item>({
   total_amount: 0,
   deduction_amount: 0,
   take_home_amount: 0,
+  update_user: '',
   classification: '',
   user_id: 0
 })
@@ -344,6 +346,7 @@ const defaultItem = ref<Item>({
   total_amount: 0,
   deduction_amount: 0,
   take_home_amount: 0,
+  update_user: '',
   classification: '',
   user_id: 0
 })
@@ -412,6 +415,8 @@ const save = async (): Promise<void> => {
   editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
   editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
   if (editedIndex.value > -1) {
+    // TODO: ログイン画面できたら、ログイン後からユーザー情報取得する
+    editedItem.value['update_user'] = 'dev_user'
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeUpdate(res)
@@ -482,6 +487,7 @@ const getIncomeDataFetchData = async(startDate: string, endDate: string): Promis
           total_amount: data.TotalAmount,
           deduction_amount: data.DeductionAmount,
           take_home_amount: data.TakeHomeAmount,
+          update_user: '',
           classification: data.Classification,
           user_id: data.UserID
       })
