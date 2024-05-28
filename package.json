@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
-    "@babel/preset-env": "^7.23.9",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.6",
+    "@babel/preset-env": "^7.24.6",
     "@types/chart.js": "^2.9.41",
     "@types/jest": "^29.5.10",
     "@types/node": "^20.12.12",
