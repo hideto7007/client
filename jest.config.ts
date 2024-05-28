@@ -5,6 +5,7 @@ export default {
     '^.+\\.mjs$': 'babel-jest',
     '^.+\\.vue$': '@vue/vue3-jest',
     "^.+\\.(ts|tsx)$": "ts-jest",
+    '^.+\\.css$': 'jest-transform-css'  // ここでCSSファイルの変換を追加
   },
   moduleFileExtensions: ['vue', 'js', 'json', 'jsx', 'ts', 'tsx', 'node'],
   "testEnvironmentOptions": {
@@ -19,7 +20,7 @@ export default {
     "<rootDir>/tests"
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(vuetify)/)',  // Vuetifyを除外しないように設定
+    '/node_modules/(?!(vuetify)/)',  // Vuetifyを除外しないように設定
   ],
   testMatch: [
     "**/__tests__/**/*.+(ts|tsx|js)",

@@ -1,7 +1,5 @@
-// import { config } from '@vue/test-utils';
-// import { createVuetify } from 'vuetify';
+import { config } from '@vue/test-utils'
+import { vuetify } from '../../src/plugins/vuetify'
 
-// const vuetify = createVuetify();  // Vuetifyインスタンスを作成
-
-// // 全テストでVuetifyを利用できるように設定
-// config.global.plugins = [vuetify];
+// Vuetifyのプラグインをセットアップ
+config.global.plugins = [vuetify]
