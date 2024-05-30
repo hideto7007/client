@@ -36,7 +36,7 @@ npm run test -- --coverage
 
 
 # test one file check command
-npm run test -- test/components/alert.spec.ts
+npm run test -- tests/components/alert.spec.ts
 
 # ci実行時に追加する
 RUN cd ./client

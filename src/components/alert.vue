@@ -26,10 +26,9 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
-import router from '../router'
 import { useRouter } from 'vue-router'
 
-const useRouters = useRouter();
+const router = useRouter()
 
 const dialog = ref<boolean>(true)
 // プロップを定義
@@ -44,7 +43,7 @@ const homeReturn = (): void => {
   if (props.color === 'error') {
     router.push('/')
   } else {
-    useRouters.go(0)
+    router.go(0)
   }
   
 }
