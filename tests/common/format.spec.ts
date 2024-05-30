@@ -68,7 +68,7 @@ describe('Format.dateDiffInDays method', () => {
     const date1: string = "2024-01-05"
     const date2: string = "2024-01-10"
 
-    expect(Format.dateDiffInDays(date1, date2)).toBe(5)
+    expect(Format.dateDiffInDays(date1, date2)).toBe(-5)
   })
   
   it('return date diff days 2', () => {

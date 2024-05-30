@@ -37,7 +37,7 @@ class Format {
         }
 
         // 差をミリ秒で取得し、日数に変換
-        const timeDiff = Math.abs(date2.getTime() - date1.getTime())
+        const timeDiff = date1.getTime() - date2.getTime()
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
     
         return diffDays
