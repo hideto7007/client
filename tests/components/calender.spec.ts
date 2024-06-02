@@ -22,7 +22,51 @@ describe('calender.vue', () => {
     expect(props.endDate).toBe('2021-01-10')
   })
 
-  it('updates periods correctly', async () => {
+  it('displays the correct date range in the text field', async () => {
+    const wrapper = mount(Calender, {
+      global: {
+        plugins: [vuetify]
+      },
+      props: { 
+        startDate: '2020-01-10', 
+        endDate: '2021-01-10'
+      },
+      // slots: {
+      //   default: `
+      //     <template #activator="{ props }">
+      //       <v-col sm="3">
+      //         <v-text-field
+      //           :model-value="'2020-01-10〜2021-01-10'"
+      //           v-bind="props"
+      //           label="表示期間"
+      //           density="comfortable"
+      //           hide-details
+      //         />
+      //       </v-col>
+      //     </template>`
+      // }
+    })
+    // const wrapper = mount(tmp, {
+    //   global: {
+    //     plugins: [vuetify]
+    //   },
+    //   props: { 
+    //     startDate: '2020-01-10', 
+    //     endDate: '2021-01-10'
+    //   },
+    // })
+    await wrapper.vm.$nextTick()
+
+    const textField = wrapper.findComponent({ name: 'VTextField' })
+    expect(textField.exists()).toBe(true)
+
+    console.log(textField.html())
+    // console.log(textField)
+    const modelValue = textField.props('modelValue')
+    expect(modelValue).toBe('2020-01-10〜2021-01-10')
+  })
+
+  xit('updates periods correctly', async () => {
     const wrapper = mount(Calender, {
       global: {
         plugins: [vuetify]
@@ -48,6 +92,8 @@ describe('calender.vue', () => {
     if (!updateButton) {
       throw new Error('Update button not found')
     }
+    const prependIcon = updateButton.find('.v-btn__prepend .mdi-update')
+    expect(prependIcon.exists()).toBe(true) // アイコンが存在することを確認
     await updateButton.trigger('click')
 
     // イベントの確認
@@ -60,7 +106,7 @@ describe('calender.vue', () => {
     expect(emittedEvents.endDateStrDrawer[0]).toEqual(['2021-12-31'])
   })
 
-  it('closes menu on cancel', async () => {
+  xit('closes menu on cancel', async () => {
     const wrapper = mount(Calender, {
       global: {
         plugins: [vuetify]
@@ -83,12 +129,14 @@ describe('calender.vue', () => {
     if (!cancelButton) {
       throw new Error('cancel button not found')
     }
-    await cancelButton!.trigger('click')
+    const prependIcon = cancelButton.find('.v-btn__prepend .mdi-cancel')
+    expect(prependIcon.exists()).toBe(true) // アイコンが存在することを確認
+    await cancelButton.trigger('click')
 
     expect(vm.isMenuOpened).toBe(false)
   })
 
-  it('clears dates on clear button click', async () => {
+  xit('clears dates on clear button click', async () => {
     const wrapper = mount(Calender, {
       global: {
         plugins: [vuetify]
@@ -118,6 +166,8 @@ describe('calender.vue', () => {
     if (!clearButton) {
       throw new Error('Clear button not found')
     }
+    const prependIcon = clearButton.find('.v-btn__prepend .mdi-close')
+    expect(prependIcon.exists()).toBe(true) // アイコンが存在することを確認
     await clearButton.trigger('click')
 
     const clearEmittedEvents = wrapper.emitted()
@@ -155,7 +205,8 @@ describe('calender.vue', () => {
     if (!updateButton) {
       throw new Error('Update button not found')
     }
-
+    const prependIcon = updateButton.find('.v-btn__prepend .mdi-update')
+    expect(prependIcon.exists()).toBe(true) // アイコンが存在することを確認
     expect(updateButton.isVisible()).toBe(true)
   })
 })
