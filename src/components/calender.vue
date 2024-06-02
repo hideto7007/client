@@ -133,18 +133,16 @@ const updatePeriods = (): void => {
 
 // 仮状態の期間を反映可能な状態なら true
 const isUpdatable = computed<boolean>(() => {
-    // 期間が変更されていないなら false
     if (!isTmpStartDateChanged.value && !isTmpEndDateChanged.value) {
         return false
     }
-    // end が start より過去の値になっているなら false (同日は可)
-    if (tmpEndDate.value !== 'undefined' && tmpStartDate.value !== 'undefined') {
-        const diffDays = Format.dateDiffInDays(tmpEndDate.value, tmpStartDate.value)
-        if (diffDays < 0) {
-            return false
-        }
+    if (tmpEndDate.value === 'undefined' || tmpStartDate.value === 'undefined') {
+        return false
     }
-    // 上記以外は true
+    const diffDays = Format.dateDiffInDays(tmpEndDate.value, tmpStartDate.value)
+    if (diffDays <= 0) {
+        return false
+    }
     return true
 })
 
@@ -224,5 +222,3 @@ export default {}
       }
     }
   </style>
-  
-  
