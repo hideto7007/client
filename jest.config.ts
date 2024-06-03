@@ -14,6 +14,7 @@ export default {
   setupFiles: [
     './tests/setting/jest.setup.ts',
     './tests/setting/setup.ts',
+    'jest-canvas-mock',
   ],
   roots: [
     "<rootDir>/src",
