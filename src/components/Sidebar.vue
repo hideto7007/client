@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits  } from 'vue'
+import { ref, defineEmits } from 'vue'
 import router from '../router'
 
 const emit = defineEmits()
@@ -46,7 +46,7 @@ const pageTransition = (key: number) : void => {
   console.log(pages.value[key].url)
   router.push(pages.value[key].url)
   // Header.vue側にメニューバー非表示にするために送信
-  emit('pageDrawer', false);
+  emit('pageDrawer', false)
 }
 
 </script>
