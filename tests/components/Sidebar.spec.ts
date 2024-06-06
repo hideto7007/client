@@ -10,7 +10,7 @@ jest.mock('../../src/router', () => ({
 
 describe('Sidebar.vue', () => {
 
-  const factory = (options = {}) => {
+  const sidebarMount = (options = {}) => {
     return mount(Sidebar, {
       global: {
         plugins: [vuetify],
@@ -21,17 +21,20 @@ describe('Sidebar.vue', () => {
 
   it('item list check', async () => {
     const listItemTexts = ['貯金額計算', '年収管理', '株価予測', 'hoge']
-    const wrapper = factory()
+    const wrapper = sidebarMount()
 
-    const listItem = wrapper.find('v-list')
+    await wrapper.vm.$nextTick()
+
+    const listItems = wrapper.findAllComponents({name: 'VListItem'})
+    const listItemTextArray = listItems.map(item => item.text())
 
     listItemTexts.forEach(text => {
-      expect(listItem.text()).toContain(text)
+      expect(listItemTextArray).toContain(text)
     })
   })
 
   it('貯金額計算 button check', async () => {
-    const wrapper = factory()
+    const wrapper = sidebarMount()
 
     // 次のレンダリングサイクルまで待ちます
     await wrapper.vm.$nextTick()
@@ -52,7 +55,7 @@ describe('Sidebar.vue', () => {
   })
 
   it('年収管理 button check', async () => {
-    const wrapper = factory()
+    const wrapper = sidebarMount()
 
     // 次のレンダリングサイクルまで待ちます
     await wrapper.vm.$nextTick()
@@ -73,7 +76,7 @@ describe('Sidebar.vue', () => {
   })
 
   it('株価予測 button check', async () => {
-    const wrapper = factory()
+    const wrapper = sidebarMount()
 
     // 次のレンダリングサイクルまで待ちます
     await wrapper.vm.$nextTick()
@@ -91,5 +94,26 @@ describe('Sidebar.vue', () => {
 
     // ルーターのプッシュが呼び出されたことを確認
     expect(router.push).toHaveBeenCalledWith('/stockpriceprediction')
+  })
+
+  it('hoge button check', async () => {
+    const wrapper = sidebarMount()
+
+    // 次のレンダリングサイクルまで待ちます
+    await wrapper.vm.$nextTick()
+
+    const itemButton = wrapper.findAllComponents({ name: 'VBtn' }).find(btn => btn.text() === 'hoge')
+
+    await itemButton?.trigger('click')
+
+    // イベントの確認
+    const emittedEvents = wrapper.emitted()
+
+    // イベントのペイロードを確認
+    expect(emittedEvents).toHaveProperty('pageDrawer')
+    expect(emittedEvents.pageDrawer[0]).toEqual([false])
+
+    // ルーターのプッシュが呼び出されたことを確認
+    expect(router.push).toHaveBeenCalledWith('no path')
   })
 })
