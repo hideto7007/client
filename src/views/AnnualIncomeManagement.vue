@@ -218,6 +218,7 @@ import Alert from "../components/alert.vue"
 import Calender from "../components/calender.vue"
 import Chart from "../components/chart.vue"
 import Format from "../common/format"
+import { ErrorConst }from "../common/const"
 import { v4 as uuidv4 } from 'uuid'
 
 
@@ -241,8 +242,8 @@ const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
 const alertColor= ref<string>('error')
 const serverErrorFlag = ref<boolean>(false)
-const serverErrorTitle = ref<string>('サーバーエラー 500エラー')
-const serverErrorText = ref<string>('サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。')
+const serverErrorTitle = ref<string>(ErrorConst.InterServerError)
+const serverErrorText = ref<string>(ErrorConst.ErrorMessage)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<number>(1)

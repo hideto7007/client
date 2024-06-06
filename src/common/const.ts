@@ -25,4 +25,4 @@ enum Type {
   Error = 'error'
 }
 
-export { PriceManagementConst, ErrorConst, Type};
+export { PriceManagementConst, ErrorConst, Type };
