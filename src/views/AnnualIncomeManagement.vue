@@ -218,7 +218,7 @@ import Alert from "../components/alert.vue"
 import Calender from "../components/calender.vue"
 import Chart from "../components/chart.vue"
 import Format from "../common/format"
-import { ErrorConst, Type, classificationListConst, labelListConst, keyListConst }from "../common/const"
+import { ErrorConst, Type, classificationListConst, KeyConst, labelListConst, keyListConst }from "../common/const"
 import { v4 as uuidv4 } from 'uuid'
 
 
@@ -319,8 +319,8 @@ const headers = ref<Headers[]>([
       key: keyList[5]
   },
   {
-      title: '編集',
-      key: 'edit'
+      title: Type.EditJp,
+      key: Type.Edit
   }
 ])
 
@@ -352,9 +352,9 @@ const defaultItem = ref<Item>({
   user_id: 0
 })
 
-const formTitle = computed(() => editedIndex.value === -1 ? '新規登録' : '編集')
+const formTitle = computed(() => editedIndex.value === -1 ? Type.CreateJp: Type.EditJp)
 
-const modeTitle = computed(() => modeFlag.value === true ? 'on' : 'off')
+const modeTitle = computed(() => modeFlag.value === true ? Type.On : Type.Off)
 
 const editItem = (item: Item): void => {
   editedIndex.value = desserts.value.indexOf(item)
@@ -371,7 +371,7 @@ const deleteItemConfirm = async(): Promise<void> => {
   const deleteId = desserts.value[editedIndex.value].income_forecast_id
   try {
       const response = await ApiEndpoint.incomeDelete(deleteId)
-      responseRsult(response.statusText, '削除', response.data.message)
+      responseRsult(response.statusText, Type.DeleteJp, response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true
@@ -397,12 +397,12 @@ const closeDelete = (): void  => {
 }
 
 const responseRsult = (responseStatus: string, title: string, message: string): void => {
-  if (responseStatus === 'OK') {
-      alertColor.value = 'success'
+  if (responseStatus === Type.OK) {
+      alertColor.value = Type.Success
       serverErrorTitle.value = `${title}成功`
       serverErrorText.value = message
     } else {
-      alertColor.value = 'warning'
+      alertColor.value = Type.Warning
       serverErrorTitle.value = `${title}エラー`
       serverErrorText.value = message
     }
@@ -412,28 +412,28 @@ const save = async (): Promise<void> => {
   loading.value = true
   const res: ApiResponse = { data: [] }
   // 値を直接入力すると文字列型になるので、その際は整数値に変換する
-  editedItem.value['age'] = Number(editedItem.value['age'])
-  editedItem.value['total_amount'] = Number(editedItem.value['total_amount'])
-  editedItem.value['deduction_amount'] = Number(editedItem.value['deduction_amount'])
+  editedItem.value[KeyConst.Age] = Number(editedItem.value[KeyConst.Age])
+  editedItem.value[KeyConst.TotalAmount] = Number(editedItem.value[KeyConst.TotalAmount])
+  editedItem.value[KeyConst.DeductionAmount] = Number(editedItem.value[KeyConst.DeductionAmount])
   if (editedIndex.value > -1) {
     // TODO: ログイン画面できたら、ログイン後からユーザー情報取得する
-    editedItem.value['update_user'] = 'dev_user'
+    editedItem.value[KeyConst.UpdateUser] = 'dev_user'
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeUpdate(res)
-      responseRsult(response.statusText, '更新', response.data.message)
+      responseRsult(response.statusText, Type.UpdateJp, response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true
       console.log(error)
     }
   } else {
-    editedItem.value['income_forecast_id'] = uuidv4()
-    editedItem.value['user_id'] = userId.value
+    editedItem.value[KeyConst.IncomeForecastID] = uuidv4()
+    editedItem.value[KeyConst.UserId] = userId.value
     res.data.push(editedItem.value)
     try {
       const response = await ApiEndpoint.incomeCreate(res)
-      responseRsult(response.statusText, '新規登録', response.data.message)
+      responseRsult(response.statusText, Type.CreateJp, response.data.message)
       serverErrorFlag.value = true
     } catch (error) {
       serverErrorFlag.value = true

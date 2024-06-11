@@ -23,7 +23,18 @@ enum Type {
   Number = 'number',
   Submit = 'submit',
   Success = 'success',
-  Error = 'error'
+  SuccessJp = '成功',
+  Warning = 'warning',
+  Error = 'error',
+  ErrorJp = 'エラー',
+  OK = 'OK',
+  DeleteJp = '削除',
+  EditJp = '編集',
+  Edit = 'edit',
+  UpdateJp = '更新',
+  CreateJp = '新規登録',
+  On = 'on',
+  Off = 'off'
 }
 
 
@@ -48,13 +59,16 @@ enum LabelConst {
 }
 
 enum KeyConst {
+  IncomeForecastID = 'income_forecast_id',
   PaymentDate = 'payment_date',
   Age = 'age',
   Industry = 'industry',
   TotalAmount = 'total_amount',
   DeductionAmount = 'deduction_amount',
   TakeHomeAmount = 'take_home_amount',
-  Classification = 'classification'
+  Classification = 'classification',
+  UpdateUser = 'update_user',
+  UserId = 'user_id'
 }
 
 // 定数リストを配列として作成
@@ -91,6 +105,7 @@ export {
   PriceManagementConst,
   ErrorConst,
   Type,
+  KeyConst,
   classificationListConst,
   labelListConst,
   keyListConst
