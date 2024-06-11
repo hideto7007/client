@@ -218,7 +218,7 @@ import Alert from "../components/alert.vue"
 import Calender from "../components/calender.vue"
 import Chart from "../components/chart.vue"
 import Format from "../common/format"
-import { ErrorConst }from "../common/const"
+import { ErrorConst, Type, classificationListConst, labelListConst, keyListConst }from "../common/const"
 import { v4 as uuidv4 } from 'uuid'
 
 
@@ -228,19 +228,19 @@ const screenFlag = ref<boolean>(false)
 // メニューが表示されているなら true
 const startDateStr = ref<string>('')
 const endDateStr = ref<string>('')
-const classificationList = ref<string[]>(['給料', '賞与', '一時金', '寸志', 'その他'])
+const classificationList = classificationListConst
 const dialog = ref<boolean>(false)
 const dialogDelete = ref<boolean>(false)
 const ageList = ref<number[]>([...Array(86).keys()].map(i => i + 15))
-const labelList = ref<string[]>(['支給日', '年齢', '業種', '総支給', '差引額', '手取り', '分類'])
-const keyList = ref<string[]>(['payment_date', 'age', 'industry', 'total_amount', 'deduction_amount', 'take_home_amount', 'classification'])
+const labelList = labelListConst
+const keyList = keyListConst
 const desserts = ref<Item[]>([])
 const editedIndex = ref<number>(-1)
 const sort = ref<boolean>(false)
 const form = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
-const alertColor= ref<string>('error')
+const alertColor= ref<string>(Type.Error)
 const serverErrorFlag = ref<boolean>(false)
 const serverErrorTitle = ref<string>(ErrorConst.InterServerError)
 const serverErrorText = ref<string>(ErrorConst.ErrorMessage)
@@ -295,28 +295,28 @@ interface ApiResponse {
 
 const headers = ref<Headers[]>([
   {
-      title: labelList.value[0],
-      key: keyList.value[0]
+      title: labelList[0],
+      key: keyList[0]
   },
   {
-      title: labelList.value[1],
-      key: keyList.value[1]
+      title: labelList[1],
+      key: keyList[1]
   },
   {
-      title: labelList.value[2],
-      key: keyList.value[2]
+      title: labelList[2],
+      key: keyList[2]
   },
   {
-      title: labelList.value[3],
-      key: keyList.value[3]
+      title: labelList[3],
+      key: keyList[3]
   },
   {
-      title: labelList.value[4],
-      key: keyList.value[4]
+      title: labelList[4],
+      key: keyList[4]
   },
   {
-      title: labelList.value[5],
-      key: keyList.value[5]
+      title: labelList[5],
+      key: keyList[5]
   },
   {
       title: '編集',
