@@ -16,6 +16,7 @@ enum ErrorConst {
   ErrorMessage = 'サーバーダウン。もしくは、サーバー側で何か不具合が発生しました。'
 }
 
+
 // Type定数
 enum Type {
   Date = 'Date',
@@ -24,5 +25,6 @@ enum Type {
   Success = 'success',
   Error = 'error'
 }
+
 
 export { PriceManagementConst, ErrorConst, Type };
