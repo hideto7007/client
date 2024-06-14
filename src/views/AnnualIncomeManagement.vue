@@ -205,8 +205,8 @@
     <Alert
       v-if="serverErrorFlag"
       :color="alertColor"
-      :title="serverErrorTitle"
-      :text="serverErrorText"
+      :title="alertTitle"
+      :text="alertText"
     />
 </template>
 
@@ -242,8 +242,8 @@ const loading = ref<boolean>(false)
 const modeFlag = ref<boolean>(false)
 const alertColor= ref<string>(Type.Error)
 const serverErrorFlag = ref<boolean>(false)
-const serverErrorTitle = ref<string>(ErrorConst.InterServerError)
-const serverErrorText = ref<string>(ErrorConst.ErrorMessage)
+const alertTitle = ref<string>(ErrorConst.InterServerError)
+const alertText = ref<string>(ErrorConst.ErrorMessage)
 // T.B.D
 // 現状は1にしておいて、後々ログイン画面作成時にパラメータでuser_idを取得出来るようにする
 const userId = ref<number>(1)
@@ -399,12 +399,12 @@ const closeDelete = (): void  => {
 const responseRsult = (responseStatus: string, title: string, message: string): void => {
   if (responseStatus === Type.OK) {
       alertColor.value = Type.Success
-      serverErrorTitle.value = `${title}成功`
-      serverErrorText.value = message
+      alertTitle.value = `${title}成功`
+      alertText.value = message
     } else {
       alertColor.value = Type.Warning
-      serverErrorTitle.value = `${title}エラー`
-      serverErrorText.value = message
+      alertTitle.value = `${title}エラー`
+      alertText.value = message
     }
 }
 
