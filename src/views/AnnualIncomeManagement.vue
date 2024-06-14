@@ -10,12 +10,13 @@
         :headers="headersList"
         :items="desserts"
         :sort-by="[
-        { key: keyList[0], order: sort },
-        { key: keyList[1], order: sort },
-        { key: keyList[2], order: sort },
-        { key: keyList[3], order: sort },
-        { key: keyList[4], order: sort },
-        { key: keyList[5], order: sort }]"
+          { key: keyList[0], order: sort },
+          { key: keyList[1], order: sort },
+          { key: keyList[2], order: sort },
+          { key: keyList[3], order: sort },
+          { key: keyList[4], order: sort },
+          { key: keyList[5], order: sort }
+        ]"
       >
       <template v-slot:top>
         <v-toolbar

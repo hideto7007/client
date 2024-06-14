@@ -1,4 +1,5 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+// import { ref } from 'vue'
 import AnnualIncomeManagement from '../../src/views/AnnualIncomeManagement.vue'
 import { vuetify } from '../../src/plugins/vuetify'
 import { ComponentPublicInstance } from 'vue'
@@ -121,6 +122,38 @@ describe('AnnualIncomeManagement.vue', () => {
 
     expect(wrapper.vm.alertTitle).toBe(`${Type.CreateJp}成功`)
     expect(wrapper.vm.alertText).toBe(Type.CreateJp)
+  })
+
+  it('toggles end date drawer correctly', () => {
+    const endDate = '2024-12-31'
+
+    wrapper.vm.toggleEndDateStrDrawer(endDate)
+    expect(wrapper.vm.endDateStr).toBe(endDate)
+  })
+
+  it('creates and manipulates items correctly', () => {
+    wrapper.vm.desserts = []
+    const item = {
+      income_forecast_id: '1',
+      payment_date: '2024-06-01',
+      age: 30,
+      industry: 'Tech',
+      total_amount: 100000,
+      deduction_amount: 30000,
+      take_home_amount: 70000,
+      update_user: 'user',
+      classification: 'Full-time',
+      user_id: 1
+    }
+
+    // Add item to the component's state
+    wrapper.vm.desserts.push(item)
+    expect(wrapper.vm.desserts).toHaveLength(1)
+    expect(wrapper.vm.desserts[0].income_forecast_id).toBe('1')
+
+    // Manipulate the item
+    wrapper.vm.desserts[0].total_amount = 120000
+    expect(wrapper.vm.desserts[0].total_amount).toBe(120000)
   })
 
   xit('toggles edit mode correctly', async () => {
