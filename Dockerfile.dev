@@ -1,5 +1,6 @@
 # 最新のUbuntuバージョンを指定
 FROM ubuntu:22.04
+ENV TZ=Asia/Tokyo
 
 # 必要なツールのインストール
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
