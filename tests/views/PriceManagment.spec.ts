@@ -23,6 +23,7 @@ describe('PriceManagment.vue', () => {
       // localVue,
       vuetify,
     })
+    wrapper.vm.today = "2024-05-30"
     localStorage.clear()
   })
 

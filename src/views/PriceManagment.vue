@@ -55,7 +55,7 @@ const localStorageKeyNameSumitFpInfo = ref<string>('sumitFpInfo')
 const localStorageKeyNameResult = ref<string>('result')
 const localStorageKeyNameDate = ref<string>('date')
 
-const today = Format.formatDate(new Date())
+const today = ref<string>(Format.formatDate(new Date()))
 const range = ref<number>(1)
 const date = ref<string>()
 const dateFlag = ref<boolean>(false)
@@ -194,7 +194,7 @@ const getPriceManagementFetchData = async (): Promise<void> => {
       const resTotalAmount = data.message.result.total_amount
 
       if (date.value) {
-        range.value = getRange(today, date.value)
+        range.value = getRange(today.value, date.value)
         dateFlag.value = true
       } else {
         dateFlag.value = false
